@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 7 - Fusion Compiler Physical Design Flow | Study Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .experiment-number {
+            font-size: 1.2em;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .course-name {
+            font-size: 1.1em;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .final-badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 0.9em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Navigation/Table of Contents */
+        .toc {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .toc h2 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .toc-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .toc-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            border-left-width: 8px;
+        }
+
+        .toc-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        section h2 {
+            color: #1e3c72;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        section h3 {
+            color: #2a5298;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        /* Concept Cards */
+        .concept-card {
+            background: #f8f9fa;
+            border-left: 5px solid #4a90e2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .concept-card h4 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        /* Comparison Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+
+        /* Key Points */
+        .key-point {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px 15px 15px 45px;
+            margin: 15px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .key-point::before {
+            content: "💡";
+            position: absolute;
+            left: 15px;
+            font-size: 1.5em;
+        }
+
+        /* Warnings */
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 15px 15px 45px;
+            margin: 15px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .warning::before {
+            content: "⚠️";
+            position: absolute;
+            left: 15px;
+            font-size: 1.5em;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: "CODE";
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7em;
+            color: #61dafb;
+            font-weight: bold;
+        }
+
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .command {
+            color: #98c379;
+        }
+
+        .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .variable {
+            color: #e06c75;
+        }
+
+        .keyword {
+            color: #c678dd;
+        }
+
+        .string {
+            color: #e5c07b;
+        }
+
+        /* Q&A Section */
+        .qa-item {
+            background: #ffffff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .question {
+            color: #1e3c72;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .question::before {
+            content: "Q: ";
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .answer {
+            color: #555;
+            padding-left: 25px;
+            line-height: 1.7;
+        }
+
+        .answer::before {
+            content: "A: ";
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        /* Common Mistakes */
+        .mistake-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .wrong, .correct {
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .wrong {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .wrong h4 {
+            color: #dc3545;
+        }
+
+        .wrong h4::before {
+            content: "❌ ";
+        }
+
+        .correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .correct h4 {
+            color: #28a745;
+        }
+
+        .correct h4::before {
+            content: "✅ ";
+        }
+
+        /* Quick Reference Cards */
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .ref-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .ref-card h4 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        .ref-card ul {
+            list-style: none;
+        }
+
+        .ref-card li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .ref-card li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+        }
+
+        /* Checklist */
+        .checklist {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .checklist-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        footer h3 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .good-luck {
+            font-size: 1.8em;
+            margin: 15px 0;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+            50% { text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+            .final-badge {
+                animation: none;
+            }
+
+            section {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mistake-container {
+                grid-template-columns: 1fr;
+            }
+
+            .ref-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .print-button:hover {
+            background: #764ba2;
+            transform: scale(1.1);
+        }
+
+        /* Flowchart Styles */
+        .flowchart {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flow-step {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px 25px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 600px;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .flow-step::after {
+            content: "↓";
+            display: block;
+            font-size: 2em;
+            color: #667eea;
+            margin: 5px 0;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="experiment-number">EXPERIMENT 7</div>
+            <h1>Introduction to Synopsys Fusion Compiler<br>Physical Design Flow</h1>
+            <div class="course-name">Hardware Design Laboratory | VLSI Design</div>
+            <div class="final-badge">📚 FINAL EXAM MATERIAL 📚</div>
+        </header>
+
+        <!-- Table of Contents -->
+        <nav class="toc">
+            <h2>📑 Table of Contents</h2>
+            <div class="toc-grid">
+                <a href="#objectives" class="toc-item">
+                    <span class="toc-number">1.</span> Objectives
+                </a>
+                <a href="#introduction" class="toc-item">
+                    <span class="toc-number">2.</span> Introduction
+                </a>
+                <a href="#concepts" class="toc-item">
+                    <span class="toc-number">3.</span> Core Concepts
+                </a>
+                <a href="#design-flow" class="toc-item">
+                    <span class="toc-number">4.</span> Physical Design Flow
+                </a>
+                <a href="#fusion-compiler" class="toc-item">
+                    <span class="toc-number">5.</span> Fusion Compiler Features
+                </a>
+                <a href="#implementation" class="toc-item">
+                    <span class="toc-number">6.</span> Implementation Steps
+                </a>
+                <a href="#code" class="toc-item">
+                    <span class="toc-number">7.</span> Complete Code Examples
+                </a>
+                <a href="#questions" class="toc-item">
+                    <span class="toc-number">8.</span> Expected Exam Questions
+                </a>
+                <a href="#mistakes" class="toc-item">
+                    <span class="toc-number">9.</span> Common Mistakes
+                </a>
+                <a href="#mqs" class="toc-item">
+                    <span class="toc-number">10.</span> Expected MQs
+                </a>
+                <a href="#reference" class="toc-item">
+                    <span class="toc-number">11.</span> Quick Reference
+                </a>
+                <a href="#checklist" class="toc-item">
+                    <span class="toc-number">12.</span> Exam Checklist
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Objectives Section -->
+            <section id="objectives">
+                <h2>🎯 Objectives</h2>
+                <div class="concept-card">
+                    <h4>Learning Goals</h4>
+                    <ul style="padding-left: 25px; line-height: 2;">
+                        <li>Understand the complete physical design flow in VLSI</li>
+                        <li>Learn to use Synopsys Fusion Compiler for physical implementation</li>
+                        <li>Master floorplanning, placement, and routing techniques</li>
+                        <li>Perform timing analysis and optimization</li>
+                        <li>Generate final layout (GDSII) files for fabrication</li>
+                        <li>Understand Design Rule Check (DRC) and Layout Versus Schematic (LVS)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Introduction Section -->
+            <section id="introduction">
+                <h2>📖 Introduction</h2>
+                
+                <div class="concept-card">
+                    <h4>What is Physical Design?</h4>
+                    <p>Physical design is the process of transforming a circuit description (netlist) into a physical layout that can be fabricated on silicon. It bridges the gap between logical design and manufacturing.</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Physical design converts RTL (Register Transfer Level) code into actual chip geometry that can be manufactured.</strong>
+                </div>
+
+                <div class="concept-card">
+                    <h4>What is Synopsys Fusion Compiler?</h4>
+                    <p>Fusion Compiler is Synopsys' next-generation RTL-to-GDSII implementation tool that combines synthesis, place and route, and signoff into a unified platform. It offers superior quality of results (QoR) with faster turnaround time.</p>
+                </div>
+
+                <h3>Key Features of Fusion Compiler</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Description</th>
+                            <th>Benefit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Unified Platform</td>
+                            <td>Integrated synthesis and P&R</td>
+                            <td>Eliminates handoff issues</td>
+                        </tr>
+                        <tr>
+                            <td>Multi-Objective Optimization</td>
+                            <td>Optimizes PPA simultaneously</td>
+                            <td>Better QoR trade-offs</td>
+                        </tr>
+                        <tr>
+                            <td>Golden Signoff</td>
+                            <td>Built-in signoff engines</td>
+                            <td>Faster convergence</td>
+                        </tr>
+                        <tr>
+                            <td>Advanced Node Support</td>
+                            <td>Supports FinFET and beyond</td>
+                            <td>Future-ready design</td>
+                        </tr>
+                        <tr>
+                            <td>Concurrent Clock/Data Opt</td>
+                            <td>Simultaneous optimization</td>
+                            <td>Better timing closure</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Core Concepts Section -->
+            <section id="concepts">
+                <h2>🔑 Core Concepts</h2>
+
+                <h3>1. Physical Design Flow Overview</h3>
+                <div class="flowchart">
+                    <div class="flow-step">📝 RTL Design (Verilog/VHDL)</div>
+                    <div class="flow-step">🔄 Logic Synthesis (DC or FC)</div>
+                    <div class="flow-step">🗂️ Gate-level Netlist</div>
+                    <div class="flow-step">📐 Floorplanning</div>
+                    <div class="flow-step">📍 Placement</div>
+                    <div class="flow-step">⏰ Clock Tree Synthesis (CTS)</div>
+                    <div class="flow-step">🛣️ Routing</div>
+                    <div class="flow-step">✅ Timing/Power/Area Optimization</div>
+                    <div class="flow-step">🔍 Physical Verification (DRC/LVS)</div>
+                    <div class="flow-step">📦 GDSII Generation</div>
+                </div>
+
+                <h3>2. Floorplanning</h3>
+                <div class="concept-card">
+                    <h4>Definition</h4>
+                    <p>Floorplanning is the process of determining the size, shape, and location of modules and macros in a chip, along with the I/O pad placement.</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Key Goals:</strong> Minimize chip area, reduce wire length, meet timing constraints, optimize power distribution, and ensure routability.
+                </div>
+
+                <h4>Important Floorplanning Parameters</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                            <th>Typical Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Core Utilization</td>
+                            <td>% of core area occupied by cells</td>
+                            <td>60-80%</td>
+                        </tr>
+                        <tr>
+                            <td>Aspect Ratio</td>
+                            <td>Height/Width ratio</td>
+                            <td>1.0 (square preferred)</td>
+                        </tr>
+                        <tr>
+                            <td>Core-to-Die Spacing</td>
+                            <td>Space between core and die edge</td>
+                            <td>10-50 µm</td>
+                        </tr>
+                        <tr>
+                            <td>Row Height</td>
+                            <td>Standard cell row height</td>
+                            <td>Multiple of library height</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning">
+                    <strong>Warning:</strong> Too high core utilization (>85%) can lead to routing congestion and timing closure issues. Leave enough white space for optimization!
+                </div>
+
+                <h3>3. Placement</h3>
+                <div class="concept-card">
+                    <h4>Definition</h4>
+                    <p>Placement is the process of assigning exact physical locations to all standard cells, macros, and other components on the chip while optimizing for timing, power, and routability.</p>
+                </div>
+
+                <h4>Types of Placement</h4>
+                <div class="concept-card">
+                    <h4>🔹 Global Placement</h4>
+                    <p>Coarse placement that determines approximate locations of cells. May have overlaps. Focuses on overall optimization.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>🔹 Legalization</h4>
+                    <p>Removes overlaps from global placement and aligns cells to legal grid positions (rows).</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>🔹 Detailed Placement</h4>
+                    <p>Fine-tunes cell positions to optimize local connections, reduce wire length, and improve timing.</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Placement Objectives:</strong> Minimize total wire length, meet timing constraints, reduce power consumption, avoid routing congestion, and maintain thermal uniformity.
+                </div>
+
+                <h3>4. Clock Tree Synthesis (CTS)</h3>
+                <div class="concept-card">
+                    <h4>Definition</h4>
+                    <p>CTS is the process of distributing the clock signal from the clock source to all sequential elements (flip-flops) in the design with minimal skew and insertion delay.</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Clock Skew:</strong> The difference in arrival time of the clock signal at different flip-flops. Minimize skew for reliable operation.
+                </div>
+
+                <h4>CTS Objectives</h4>
+                <ul style="padding-left: 25px; line-height: 2;">
+                    <li><strong>Minimize Clock Skew</strong> - Ensure all FFs receive clock simultaneously</li>
+                    <li><strong>Minimize Insertion Delay</strong> - Reduce clock latency</li>
+                    <li><strong>Balance Clock Tree</strong> - Equal path lengths to all sinks</li>
+                    <li><strong>Meet Slew/Capacitance Limits</strong> - Maintain signal integrity</li>
+                    <li><strong>Reduce Power Consumption</strong> - Clock network consumes 30-40% power</li>
+                </ul>
+
+                <div class="warning">
+                    <strong>Warning:</strong> Don't perform CTS too early! Complete placement and pre-CTS optimization first. Clock tree is hard to modify once built.
+                </div>
+
+                <h3>5. Routing</h3>
+                <div class="concept-card">
+                    <h4>Definition</h4>
+                    <p>Routing is the process of creating physical connections between cells using metal layers according to the netlist, while following design rules and optimizing for performance.</p>
+                </div>
+
+                <h4>Routing Stages</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Description</th>
+                            <th>Focus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Global Routing</td>
+                            <td>Assigns nets to routing regions</td>
+                            <td>Overall connectivity planning</td>
+                        </tr>
+                        <tr>
+                            <td>Track Assignment</td>
+                            <td>Assigns nets to specific tracks</td>
+                            <td>Detailed path planning</td>
+                        </tr>
+                        <tr>
+                            <td>Detail Routing</td>
+                            <td>Creates actual metal geometries</td>
+                            <td>DRC-clean routing</td>
+                        </tr>
+                        <tr>
+                            <td>Search & Repair</td>
+                            <td>Fixes DRC violations</td>
+                            <td>Clean up and optimization</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="key-point">
+                    <strong>Metal Layer Usage:</strong> Lower layers (M1-M2) for local connections, middle layers (M3-M5) for signal routing, upper layers (M6+) for power/ground and long-distance signals.
+                </div>
+
+                <h3>6. Timing Analysis</h3>
+                <div class="concept-card">
+                    <h4>Static Timing Analysis (STA)</h4>
+                    <p>STA verifies the timing performance of a design by checking all possible paths without requiring simulation. It ensures setup and hold time requirements are met.</p>
+                </div>
+
+                <h4>Critical Timing Concepts</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concept</th>
+                            <th>Definition</th>
+                            <th>Constraint</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Setup Time</td>
+                            <td>Min time data must be stable before clock edge</td>
+                            <td>Data must arrive early enough</td>
+                        </tr>
+                        <tr>
+                            <td>Hold Time</td>
+                            <td>Min time data must be stable after clock edge</td>
+                            <td>Data must stay stable long enough</td>
+                        </tr>
+                        <tr>
+                            <td>Slack</td>
+                            <td>Difference between required and arrival time</td>
+                            <td>Must be positive (≥0)</td>
+                        </tr>
+                        <tr>
+                            <td>Critical Path</td>
+                            <td>Path with worst (minimum) slack</td>
+                            <td>Focus optimization here</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning">
+                    <strong>Common Timing Violations:</strong><br>
+                    ⚠️ Setup Violation: Data arrives too late → Reduce logic depth, upsize cells, optimize placement<br>
+                    ⚠️ Hold Violation: Data changes too early → Add delay buffers, increase wire length
+                </div>
+
+                <h3>7. Design Rule Check (DRC) & Layout Versus Schematic (LVS)</h3>
+                
+                <div class="concept-card">
+                    <h4>Design Rule Check (DRC)</h4>
+                    <p>DRC verifies that the layout meets all manufacturing rules provided by the foundry, including minimum width, spacing, enclosure, and density rules.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Layout Versus Schematic (LVS)</h4>
+                    <p>LVS ensures that the physical layout exactly matches the circuit schematic/netlist. It verifies connectivity and device properties.</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Check Type</th>
+                            <th>Purpose</th>
+                            <th>Tool</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DRC</td>
+                            <td>Manufacturability verification</td>
+                            <td>Calibre, ICV, PVS</td>
+                        </tr>
+                        <tr>
+                            <td>LVS</td>
+                            <td>Functionality verification</td>
+                            <td>Calibre nmLVS, Assura</td>
+                        </tr>
+                        <tr>
+                            <td>Antenna Check</td>
+                            <td>Prevent gate oxide damage</td>
+                            <td>Built into DRC deck</td>
+                        </tr>
+                        <tr>
+                            <td>ERC</td>
+                            <td>Electrical rule checking</td>
+                            <td>Integrated in LVS</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="key-point">
+                    <strong>Zero DRC/LVS violations required for tape-out!</strong> These are mandatory signoff checks.
+                </div>
+            </section>
+
+            <!-- Design Flow Section -->
+            <section id="design-flow">
+                <h2>🔄 Complete Physical Design Flow</h2>
+
+                <div class="concept-card">
+                    <h4>Step-by-Step Process</h4>
+                </div>
+
+                <h3>Phase 1: Design Setup</h3>
+                <div class="key-point">
+                    <strong>Inputs Required:</strong><br>
+                    • Gate-level netlist (.v file)<br>
+                    • Technology library (.db files)<br>
+                    • Physical library (LEF files)<br>
+                    • Timing constraints (.sdc file)<br>
+                    • Floorplan specifications<br>
+                    • Power intent (UPF file - optional)
+                </div>
+
+                <h3>Phase 2: Floorplanning</h3>
+                <ol style="padding-left: 25px; line-height: 2;">
+                    <li>Initialize floorplan with dimensions</li>
+                    <li>Create power rings and straps</li>
+                    <li>Place macros and hard IPs</li>
+                    <li>Define I/O pad locations</li>
+                    <li>Create placement blockages if needed</li>
+                    <li>Verify floorplan quality</li>
+                </ol>
+
+                <h3>Phase 3: Power Planning</h3>
+                <ol style="padding-left: 25px; line-height: 2;">
+                    <li>Create VDD/VSS rings around core</li>
+                    <li>Add power straps across the core</li>
+                    <li>Connect straps to rings</li>
+                    <li>Place standard cell rails</li>
+                    <li>Verify power grid integrity</li>
+                </ol>
+
+                <h3>Phase 4: Placement</h3>
+                <ol style="padding-left: 25px; line-height: 2;">
+                    <li>Run coarse placement (global)</li>
+                    <li>Perform high-fanout net synthesis</li>
+                    <li>Optimize placement for timing</li>
+                    <li>Legalize placement</li>
+                    <li>Perform detailed placement</li>
+                    <li>Check congestion and timing</li>
+                </ol>
+
+                <h3>Phase 5: Clock Tree Synthesis</h3>
+                <ol style="padding-left: 25px; line-height: 2;">
+                    <li>Define clock tree specifications</li>
+                    <li>Identify clock sources and sinks</li>
+                    <li>Build clock tree structure</li>
+                    <li>Optimize for skew and insertion delay</li>
+                    <li>Route clock nets</li>
+                    <li>Verify clock quality</li>
+                </ol>
+
+                <h3>Phase 6: Routing</h3>
+                <ol style="padding-left: 25px; line-height: 2;">
+                    <li>Run global routing</li>
+                    <li>Track assignment</li>
+                    <li>Detailed routing</li>
+                    <li>Search and repair DRC violations</li>
+                    <li>Optimize routed design</li>
+                    <li>Perform ECO routing if needed</li>
+                </ol>
+
+                <h3>Phase 7: Signoff Verification</h3>
+                <ol style="padding-left: 25px; line-height: 2;">
+                    <li>Extract parasitic RC</li>
+                    <li>Run signoff STA</li>
+                    <li>Fix timing violations</li>
+                    <li>Run DRC and LVS</li>
+                    <li>Check antenna violations</li>
+                    <li>Generate final GDSII</li>
+                </ol>
+            </section>
+
+            <!-- Fusion Compiler Features Section -->
+            <section id="fusion-compiler">
+                <h2>⚡ Fusion Compiler Unique Features</h2>
+
+                <div class="concept-card">
+                    <h4>1. Unified RTL-to-GDSII Flow</h4>
+                    <p>Unlike traditional flows where synthesis (Design Compiler) and P&R (IC Compiler) are separate, Fusion Compiler integrates both in a single tool, eliminating handoff issues and providing better optimization.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>2. Golden Signoff Integration</h4>
+                    <p>Built-in PrimeTime (timing), StarRC (extraction), and RedHawk (power) engines ensure signoff-quality results during implementation, reducing iterations.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>3. Multi-Objective Concurrent Optimization</h4>
+                    <p>Simultaneously optimizes power, performance, and area (PPA) throughout the flow rather than in isolated stages.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>4. Advanced Node Support</h4>
+                    <p>Native support for FinFET technologies (7nm, 5nm, 3nm) with multi-Vt optimization and advanced design rules.</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>Key Advantage:</strong> Fusion Compiler can achieve 10-20% better PPA compared to traditional DC + ICC2 flow with 2-3x faster runtime!
+                </div>
+            </section>
+
+            <!-- Implementation Steps Section -->
+            <section id="implementation">
+                <h2>🛠️ Implementation Steps in Fusion Compiler</h2>
+
+                <h3>Step 1: Design Setup and Library Loading</h3>
+                <div class="concept-card">
+                    <p>Configure the tool with technology libraries, timing constraints, and design files.</p>
+                </div>
+
+                <h3>Step 2: Floorplan Initialization</h3>
+                <div class="concept-card">
+                    <p>Create the chip canvas with appropriate dimensions and utilization targets.</p>
+                </div>
+
+                <h3>Step 3: Power Network Creation</h3>
+                <div class="concept-card">
+                    <p>Build robust power distribution network for stable voltage supply.</p>
+                </div>
+
+                <h3>Step 4: Placement and Optimization</h3>
+                <div class="concept-card">
+                    <p>Place cells and optimize for timing, power, and area targets.</p>
+                </div>
+
+                <h3>Step 5: Clock Tree Synthesis</h3>
+                <div class="concept-card">
+                    <p>Distribute clock signal with minimal skew to all sequential elements.</p>
+                </div>
+
+                <h3>Step 6: Routing</h3>
+                <div class="concept-card">
+                    <p>Create physical metal connections for all nets while meeting DRC rules.</p>
+                </div>
+
+                <h3>Step 7: Signoff and GDSII Generation</h3>
+                <div class="concept-card">
+                    <p>Final verification and generate manufacturing files.</p>
+                </div>
+
+                <div class="warning">
+                    <strong>Important:</strong> Always save your design database after each major step! Use checkpoints for recovery.
+                </div>
+            </section>
+
+            <!-- Complete Code Section -->
+            <section id="code">
+                <h2>💻 Complete Code Examples</h2>
+
+                <h3>Setup Script (setup.tcl)</h3>
+                <div class="code-block">
+<code><span class="comment"># Library and Design Setup</span>
+<span class="keyword">set</span> <span class="variable">search_path</span> <span class="string">"./libs ./rtl"</span>
+<span class="keyword">set</span> <span class="variable">target_library</span> <span class="string">"slow.db"</span>
+<span class="keyword">set</span> <span class="variable">link_library</span> <span class="string">"* slow.db fast.db"</span>
+
+<span class="comment"># Technology Files</span>
+<span class="keyword">set</span> <span class="variable">tech_file</span> <span class="string">"./tech/tech.tf"</span>
+<span class="keyword">set</span> <span class="variable">tlu_max</span> <span class="string">"./tech/max.tluplus"</span>
+<span class="keyword">set</span> <span class="variable">tlu_min</span> <span class="string">"./tech/min.tluplus"</span>
+<span class="keyword">set</span> <span class="variable">tech_map</span> <span class="string">"./tech/tech.map"</span>
+
+<span class="comment"># Design Information</span>
+<span class="keyword">set</span> <span class="variable">design_name</span> <span class="string">"my_design"</span>
+<span class="keyword">set</span> <span class="variable">netlist</span> <span class="string">"./netlist/my_design.v"</span>
+<span class="keyword">set</span> <span class="variable">sdc_file</span> <span class="string">"./constraints/my_design.sdc"</span></code>
+                </div>
+
+                <h3>Main Fusion Compiler Script (fc_flow.tcl)</h3>
+                <div class="code-block">
+<code><span class="comment">######################################</span>
+<span class="comment"># Fusion Compiler Physical Design Flow</span>
+<span class="comment">######################################</span>
+
+<span class="comment"># 1. START FUSION COMPILER AND LOAD DESIGN</span>
+<span class="keyword">source</span> setup.tcl
+
+<span class="comment"># Read netlist</span>
+<span class="command">read_verilog</span> <span class="variable">$netlist</span>
+<span class="command">link_design</span> <span class="variable">$design_name</span>
+
+<span class="comment"># Read constraints</span>
+<span class="command">read_sdc</span> <span class="variable">$sdc_file</span>
+
+<span class="comment"># Load physical libraries</span>
+<span class="command">read_lef</span> <span class="string">"./lef/tech.lef"</span>
+<span class="command">read_lef</span> <span class="string">"./lef/cells.lef"</span>
+
+<span class="comment"># Set TLU+ models for RC extraction</span>
+<span class="command">set_tlu_plus_files</span> \
+  -max_tluplus <span class="variable">$tlu_max</span> \
+  -min_tluplus <span class="variable">$tlu_min</span> \
+  -tech2itf_map <span class="variable">$tech_map</span>
+
+<span class="comment"># 2. FLOORPLANNING</span>
+<span class="command">initialize_floorplan</span> \
+  -core_utilization 0.7 \
+  -core_offset {10 10 10 10} \
+  -flip_first_row
+
+<span class="comment"># Create power rings</span>
+<span class="command">create_pg_ring_pattern</span> ring_pattern \
+  -horizontal_layer M5 \
+  -horizontal_width 2 \
+  -horizontal_spacing 1 \
+  -vertical_layer M6 \
+  -vertical_width 2 \
+  -vertical_spacing 1
+
+<span class="command">set_pg_strategy</span> core_ring \
+  -core \
+  -pattern {{name: ring_pattern} {nets: {VDD VSS}}}
+
+<span class="comment"># Create power mesh</span>
+<span class="command">create_pg_mesh_pattern</span> mesh_pattern \
+  -layers {{vertical_layer: M5} {width: 0.5} {spacing: 2} {pitch: 20}} \
+  -layers {{horizontal_layer: M6} {width: 0.5} {spacing: 2} {pitch: 20}}
+
+<span class="command">set_pg_strategy</span> core_mesh \
+  -core \
+  -pattern {{name: mesh_pattern} {nets: {VDD VSS}}}
+
+<span class="comment"># Apply power strategies</span>
+<span class="command">compile_pg</span> -strategies {core_ring core_mesh}
+
+<span class="comment"># Connect standard cell rails</span>
+<span class="command">create_pg_std_cell_conn_pattern</span> rail_pattern \
+  -layers M1
+
+<span class="command">set_pg_strategy</span> rail_strat \
+  -core \
+  -pattern {{name: rail_pattern} {nets: VDD VSS}}
+
+<span class="command">compile_pg</span> -strategies rail_strat
+
+<span class="comment"># Save floorplan checkpoint</span>
+<span class="command">save_block</span> -as floorplan
+
+<span class="comment"># 3. PLACEMENT</span>
+<span class="comment"># Set placement options</span>
+<span class="command">set_app_options</span> -name place.coarse.continue_on_missing_scandef -value true
+
+<span class="comment"># Run placement</span>
+<span class="command">place_opt</span>
+
+<span class="comment"># Check placement quality</span>
+<span class="command">report_qor</span>
+<span class="command">report_congestion</span>
+<span class="command">report_timing</span> -max_paths 10
+
+<span class="comment"># Save placement checkpoint</span>
+<span class="command">save_block</span> -as placed
+
+<span class="comment"># 4. CLOCK TREE SYNTHESIS</span>
+<span class="comment"># Set CTS options</span>
+<span class="command">set_app_options</span> -name cts.common.max_fanout -value 32
+<span class="command">set_app_options</span> -name cts.compile.enable_global_route -value true
+
+<span class="comment"># Define clock tree specifications</span>
+<span class="command">set_clock_tree_options</span> \
+  -target_skew 0.1 \
+  -max_capacitance 0.3
+
+<span class="comment"># Run CTS</span>
+<span class="command">clock_opt</span>
+
+<span class="comment"># Report clock tree quality</span>
+<span class="command">report_clock_qor</span>
+<span class="command">report_clock_timing</span> -type skew
+
+<span class="comment"># Save CTS checkpoint</span>
+<span class="command">save_block</span> -as cts
+
+<span class="comment"># 5. ROUTING</span>
+<span class="comment"># Set routing options</span>
+<span class="command">set_app_options</span> -name route.common.verbose_level -value 2
+<span class="command">set_app_options</span> -name route.detail.eco_route_use_soft_spacing -value true
+
+<span class="comment"># Run routing</span>
+<span class="command">route_auto</span>
+
+<span class="comment"># Report routing quality</span>
+<span class="command">report_qor</span>
+<span class="command">report_timing</span>
+
+<span class="comment"># Save routed checkpoint</span>
+<span class="command">save_block</span> -as routed
+
+<span class="comment"># 6. OPTIMIZATION AND SIGNOFF</span>
+<span class="comment"># Run post-route optimization</span>
+<span class="command">route_opt</span>
+
+<span class="comment"># Check design</span>
+<span class="command">check_design</span> -checks pre_clock_tree_stage
+<span class="command">check_legality</span>
+
+<span class="comment"># Generate reports</span>
+<span class="command">report_qor</span> > reports/final_qor.rpt
+<span class="command">report_timing</span> -max_paths 100 > reports/final_timing.rpt
+<span class="command">report_power</span> > reports/final_power.rpt
+<span class="command">report_area</span> > reports/final_area.rpt
+
+<span class="comment"># 7. STREAM OUT GDSII</span>
+<span class="comment"># Define layer map</span>
+<span class="command">set_write_stream_options</span> \
+  -map_layer <span class="string">"./tech/gds.map"</span> \
+  -child_depth 0
+
+<span class="comment"># Write GDSII file</span>
+<span class="command">write_stream</span> \
+  -format gds \
+  -lib_name <span class="variable">$design_name</span> \
+  <span class="string">"./output/${design_name}.gds"</span>
+
+<span class="comment"># Write final netlist</span>
+<span class="command">write_verilog</span> <span class="string">"./output/${design_name}_final.v"</span>
+
+<span class="comment"># Write SDF for timing simulation</span>
+<span class="command">write_sdf</span> <span class="string">"./output/${design_name}.sdf"</span>
+
+<span class="command">puts</span> <span class="string">"Physical design flow completed successfully!"</span></code>
+                </div>
+
+                <h3>SDC Constraints Example</h3>
+                <div class="code-block">
+<code><span class="comment"># Clock Definition</span>
+<span class="command">create_clock</span> -name clk -period 10 [get_ports clk]
+
+<span class="comment"># Input/Output Delays</span>
+<span class="command">set_input_delay</span> -clock clk -max 2.0 [all_inputs]
+<span class="command">set_output_delay</span> -clock clk -max 2.0 [all_outputs]
+
+<span class="comment"># Drive Strength</span>
+<span class="command">set_driving_cell</span> -lib_cell BUFX4 [all_inputs]
+
+<span class="comment"># Load Capacitance</span>
+<span class="command">set_load</span> 0.05 [all_outputs]
+
+<span class="comment"># Max Transition and Capacitance</span>
+<span class="command">set_max_transition</span> 0.5 [current_design]
+<span class="command">set_max_capacitance</span> 0.3 [current_design]
+
+<span class="comment"># Operating Conditions</span>
+<span class="command">set_operating_conditions</span> -max slow -max_library slow</code>
+                </div>
+
+                <h3>Quick Command Reference</h3>
+                <div class="code-block">
+<code><span class="comment"># GUI Commands</span>
+<span class="command">start_gui</span>              <span class="comment"># Launch graphical interface</span>
+<span class="command">gui_show_view</span>          <span class="comment"># Show specific view</span>
+<span class="command">gui_zoom_fit</span>           <span class="comment"># Fit design in window</span>
+
+<span class="comment"># Design Navigation</span>
+<span class="command">current_design</span>         <span class="comment"># Show current design</span>
+<span class="command">get_cells</span> *            <span class="comment"># List all cells</span>
+<span class="command">get_nets</span> *             <span class="comment"># List all nets</span>
+<span class="command">get_pins</span> *             <span class="comment"># List all pins</span>
+
+<span class="comment"># Reporting</span>
+<span class="command">report_qor</span>             <span class="comment"># Quality of Results summary</span>
+<span class="command">report_timing</span>          <span class="comment"># Timing paths</span>
+<span class="command">report_power</span>           <span class="comment"># Power consumption</span>
+<span class="command">report_area</span>            <span class="comment"># Area utilization</span>
+<span class="command">report_clock_qor</span>       <span class="comment"># Clock tree quality</span>
+<span class="command">report_congestion</span>      <span class="comment"># Routing congestion</span>
+
+<span class="comment"># Debug Commands</span>
+<span class="command">check_design</span>           <span class="comment"># Check for design issues</span>
+<span class="command">check_legality</span>         <span class="comment"># Check placement legality</span>
+<span class="command">check_timing</span>           <span class="comment"># Check timing constraints</span>
+
+<span class="comment"># Saving and Loading</span>
+<span class="command">save_block</span> -as name   <span class="comment"># Save design checkpoint</span>
+<span class="command">open_block</span> name        <span class="comment"># Open saved checkpoint</span></code>
+                </div>
+            </section>
+
+            <!-- Expected Questions Section -->
+            <section id="questions">
+                <h2>❓ Expected Exam Questions</h2>
+
+                <div class="qa-item">
+                    <div class="question">What is the purpose of physical design in VLSI?</div>
+                    <div class="answer">Physical design transforms a gate-level netlist into a physical layout (GDSII) that can be manufactured. It involves floorplanning, placement, routing, and verification to create a design that meets timing, power, and area requirements while being manufacturable.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Explain the difference between global placement and detailed placement.</div>
+                    <div class="answer">Global placement determines approximate locations of cells without considering legality (cells may overlap). It focuses on overall optimization goals. Detailed placement refines these positions to legal locations (no overlaps, aligned to rows) and optimizes local connectivity and timing.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is clock skew and why is it important?</div>
+                    <div class="answer">Clock skew is the difference in arrival time of the clock signal at different sequential elements (flip-flops). It's critical because excessive skew can cause timing violations. Positive skew can help setup time but hurt hold time, while negative skew does the opposite. Minimizing skew ensures reliable synchronous operation.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What are the typical core utilization values and why can't we use 100%?</div>
+                    <div class="answer">Typical core utilization ranges from 60-80%. We can't use 100% because: (1) cells need space for routing channels, (2) optimization requires flexibility to move/resize cells, (3) high utilization causes routing congestion, (4) some whitespace is needed for buffers and optimization, (5) it impacts yield and manufacturability.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Explain the difference between DRC and LVS.</div>
+                    <div class="answer">DRC (Design Rule Check) verifies the layout meets manufacturing rules like minimum width, spacing, and density - ensures manufacturability. LVS (Layout Versus Schematic) verifies the layout connectivity matches the schematic/netlist - ensures functional correctness. Both must pass for tape-out.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the difference between setup time and hold time violations?</div>
+                    <div class="answer">Setup violation occurs when data arrives too late (after required time before clock edge) - path is too slow. Fix by reducing logic depth, upsizing cells, or optimizing placement. Hold violation occurs when data changes too early (before required time after clock edge) - path is too fast. Fix by adding delay buffers or increasing wire length.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What are the advantages of Fusion Compiler over traditional DC+ICC2 flow?</div>
+                    <div class="answer">Fusion Compiler advantages: (1) Unified RTL-to-GDSII platform eliminates handoff issues, (2) Golden signoff integration reduces iterations, (3) Concurrent multi-objective optimization for better PPA, (4) 10-20% better QoR, (5) 2-3x faster runtime, (6) Native support for advanced nodes (FinFET).</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the purpose of TLU+ files in physical design?</div>
+                    <div class="answer">TLU+ (Table Look-Up Plus) files contain resistance and capacitance tables for accurate parasitic extraction based on physical layout geometry. They model RC parasitics for different wire widths, spacings, and layers, enabling accurate timing analysis during physical implementation.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Explain the routing stages in order.</div>
+                    <div class="answer">Routing stages: (1) Global Routing - assigns nets to routing regions/tiles, creates routing guides, (2) Track Assignment - assigns nets to specific tracks within regions, (3) Detail Routing - creates actual metal geometries on specific layers and tracks, (4) Search & Repair - fixes DRC violations and optimizes routes.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the purpose of power rings and power mesh?</div>
+                    <div class="answer">Power rings surround the core to provide robust VDD/VSS distribution from pads. Power mesh (straps) distributes power across the core area, reducing IR drop and ensuring uniform voltage supply. Together they form a low-resistance power distribution network that prevents voltage droop during switching.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What information is contained in LEF files?</div>
+                    <div class="answer">LEF (Library Exchange Format) files contain physical information about standard cells and technology: (1) Cell dimensions and pin locations, (2) Metal layer definitions and routing rules, (3) Blockage information, (4) Site definitions for cell placement, (5) Via definitions. LEF is used for P&R while detailed transistor info is hidden.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Why is congestion analysis important during placement?</div>
+                    <div class="answer">Congestion analysis identifies areas where routing demand exceeds available tracks. High congestion leads to: (1) Routing failures/DRCs, (2) Longer wire detours increasing delay, (3) Difficulty meeting timing, (4) More vias and complexity. Detecting congestion during placement allows cell spreading before routing.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the purpose of the SDC file in physical design?</div>
+                    <div class="answer">SDC (Synopsys Design Constraints) file specifies timing constraints for the design: clock definitions, input/output delays, multicycle paths, false paths, load capacitances, drive strengths, max transition/capacitance limits. It guides optimization and enables timing verification (STA).</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Explain the concept of timing slack.</div>
+                    <div class="answer">Slack = Required Time - Arrival Time. Positive slack (>0) means timing is met with margin. Negative slack (<0) indicates timing violation. Setup slack uses latest arrival and earliest required time. Hold slack uses earliest arrival and latest required time. Critical path has the worst (minimum) slack.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the final output of physical design flow?</div>
+                    <div class="answer">Final outputs include: (1) GDSII file - complete layout geometry for fabrication, (2) Final netlist - post-layout netlist with ECOs, (3) SDF file - timing delays for gate-level simulation, (4) Reports - timing, power, area QoR, (5) DRC/LVS clean status - verification sign-off.</div>
+                </div>
+            </section>
+
+            <!-- Common Mistakes Section -->
+            <section id="mistakes">
+                <h2>⚠️ Common Mistakes to Avoid</h2>
+
+                <h3>Mistake 1: Incorrect Library Loading</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># Missing link library</span>
+<span class="keyword">set</span> <span class="variable">target_library</span> <span class="string">"slow.db"</span>
+<span class="comment"># Will cause link errors!</span></code>
+                        </div>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># Include * for memory</span>
+<span class="keyword">set</span> <span class="variable">target_library</span> <span class="string">"slow.db"</span>
+<span class="keyword">set</span> <span class="variable">link_library</span> <span class="string">"* slow.db fast.db"</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Mistake 2: Too High Core Utilization</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># Will cause congestion!</span>
+<span class="command">initialize_floorplan</span> \
+  -core_utilization 0.95</code>
+                        </div>
+                        <p style="margin-top: 10px;">Leads to routing congestion, no space for optimization, timing closure issues.</p>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># Leave room for routing!</span>
+<span class="command">initialize_floorplan</span> \
+  -core_utilization 0.70</code>
+                        </div>
+                        <p style="margin-top: 10px;">Provides adequate whitespace for routing and optimization.</p>
+                    </div>
+                </div>
+
+                <h3>Mistake 3: Running CTS Too Early</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <p>Running CTS immediately after floorplan without placement optimization.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="command">initialize_floorplan</span>
+<span class="command">clock_opt</span>  <span class="comment"># Too early!</span></code>
+                        </div>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <p>Complete placement first, then run CTS.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="command">initialize_floorplan</span>
+<span class="command">place_opt</span>
+<span class="command">clock_opt</span>  <span class="comment"># After placement!</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Mistake 4: Forgetting to Save Checkpoints</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <p>Running entire flow without saving intermediate states.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="command">place_opt</span>
+<span class="command">clock_opt</span>
+<span class="command">route_auto</span>
+<span class="comment"># No saves - if error, restart all!</span></code>
+                        </div>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <p>Save after each major step for recovery.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="command">place_opt</span>
+<span class="command">save_block</span> -as placed
+<span class="command">clock_opt</span>
+<span class="command">save_block</span> -as cts
+<span class="command">route_auto</span>
+<span class="command">save_block</span> -as routed</code>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Mistake 5: Missing TLU+ Files Setup</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <p>Not loading parasitic models leads to inaccurate timing.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># No TLU+ files loaded</span>
+<span class="command">place_opt</span>
+<span class="comment"># Timing will be wildly optimistic!</span></code>
+                        </div>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <p>Load TLU+ files before any optimization.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="command">set_tlu_plus_files</span> \
+  -max_tluplus max.tluplus \
+  -min_tluplus min.tluplus \
+  -tech2itf_map tech.map
+<span class="command">place_opt</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Mistake 6: Ignoring Congestion Warnings</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <p>Proceeding to routing despite high congestion warnings from placement.</p>
+                        <p style="margin-top: 10px; color: #dc3545;"><strong>Result:</strong> Routing DRCs, timing violations, failed design.</p>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <p>Check congestion after placement and fix before proceeding.</p>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="command">place_opt</span>
+<span class="command">report_congestion</span>
+<span class="comment"># If high congestion:</span>
+<span class="comment"># - Reduce utilization</span>
+<span class="comment"># - Spread cells manually</span>
+<span class="comment"># - Add routing blockages</span></code>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Mistake 7: Incorrect Clock Definitions</h3>
+                <div class="mistake-container">
+                    <div class="wrong">
+                        <h4>Wrong</h4>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># Period in ns but constraints in ps</span>
+<span class="command">create_clock</span> -period 10000 [get_ports clk]
+<span class="comment"># Unit mismatch!</span></code>
+                        </div>
+                    </div>
+                    <div class="correct">
+                        <h4>Correct</h4>
+                        <div class="code-block" style="margin-top: 10px;">
+<code><span class="comment"># Consistent units (ns)</span>
+<span class="command">create_clock</span> -period 10 [get_ports clk]
+<span class="comment"># 10ns = 100MHz</span></code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expected MQs Section -->
+            <section id="mqs">
+                <h2>📝 Expected Multiple Choice Questions</h2>
+
+                <div class="qa-item">
+                    <div class="question">What is the typical range for core utilization in ASIC design?</div>
+                    <div class="answer">
+                        <strong>Answer: 60-80%</strong><br><br>
+                        Options would typically be:<br>
+                        A) 40-50%<br>
+                        B) 60-80% ✓<br>
+                        C) 85-95%<br>
+                        D) 95-100%
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Which tool is used for physical design in this lab?</div>
+                    <div class="answer">
+                        <strong>Answer: Synopsys Fusion Compiler</strong><br><br>
+                        Options:<br>
+                        A) Cadence Innovus<br>
+                        B) Synopsys IC Compiler II<br>
+                        C) Synopsys Fusion Compiler ✓<br>
+                        D) Mentor Calibre
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What does DRC stand for?</div>
+                    <div class="answer">
+                        <strong>Answer: Design Rule Check</strong><br><br>
+                        Options:<br>
+                        A) Data Rate Control<br>
+                        B) Design Rule Check ✓<br>
+                        C) Digital Resource Compiler<br>
+                        D) Device Reliability Check
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Which metal layers are typically used for power distribution?</div>
+                    <div class="answer">
+                        <strong>Answer: Upper metal layers (M5 and above)</strong><br><br>
+                        Options:<br>
+                        A) M1 and M2<br>
+                        B) M2 and M3<br>
+                        C) M3 and M4<br>
+                        D) M5 and above ✓
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the purpose of Clock Tree Synthesis?</div>
+                    <div class="answer">
+                        <strong>Answer: To distribute clock signal with minimal skew to all flip-flops</strong><br><br>
+                        Options:<br>
+                        A) To generate clock signal<br>
+                        B) To distribute clock with minimal skew ✓<br>
+                        C) To verify clock frequency<br>
+                        D) To synthesize logic cells
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">Which file format is used for final chip fabrication?</div>
+                    <div class="answer">
+                        <strong>Answer: GDSII</strong><br><br>
+                        Options:<br>
+                        A) Verilog (.v)<br>
+                        B) LEF (.lef)<br>
+                        C) GDSII (.gds) ✓<br>
+                        D) DEF (.def)
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What does LEF stand for?</div>
+                    <div class="answer">
+                        <strong>Answer: Library Exchange Format</strong><br><br>
+                        Options:<br>
+                        A) Logic Element File<br>
+                        B) Library Exchange Format ✓<br>
+                        C) Layout Extraction Format<br>
+                        D) Logical Entity Framework
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">In which order are the major physical design steps performed?</div>
+                    <div class="answer">
+                        <strong>Answer: Floorplan → Placement → CTS → Routing</strong><br><br>
+                        Options:<br>
+                        A) Placement → Floorplan → CTS → Routing<br>
+                        B) Floorplan → Placement → CTS → Routing ✓<br>
+                        C) Floorplan → CTS → Placement → Routing<br>
+                        D) CTS → Floorplan → Placement → Routing
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What does positive slack indicate?</div>
+                    <div class="answer">
+                        <strong>Answer: Timing constraint is met with margin</strong><br><br>
+                        Options:<br>
+                        A) Timing violation<br>
+                        B) Timing constraint is met ✓<br>
+                        C) Setup violation<br>
+                        D) Hold violation
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="question">What is the purpose of TLU+ files?</div>
+                    <div class="answer">
+                        <strong>Answer: RC parasitic extraction models</strong><br><br>
+                        Options:<br>
+                        A) Timing library<br>
+                        B) Physical library<br>
+                        C) RC parasitic models ✓<br>
+                        D) Power analysis data
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Reference Cards Section -->
+            <section id="reference">
+                <h2>🎴 Quick Reference Cards</h2>
+
+                <div class="ref-grid">
+                    <div class="ref-card">
+                        <h4>🔧 Essential Commands</h4>
+                        <ul>
+                            <li>read_verilog - Load netlist</li>
+                            <li>link_design - Link design</li>
+                            <li>read_sdc - Load constraints</li>
+                            <li>initialize_floorplan - Create canvas</li>
+                            <li>place_opt - Run placement</li>
+                            <li>clock_opt - Run CTS</li>
+                            <li>route_auto - Run routing</li>
+                            <li>write_stream - Generate GDSII</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>📊 Key Reports</h4>
+                        <ul>
+                            <li>report_qor - Quality metrics</li>
+                            <li>report_timing - Timing paths</li>
+                            <li>report_power - Power analysis</li>
+                            <li>report_area - Area usage</li>
+                            <li>report_congestion - Routing density</li>
+                            <li>report_clock_qor - Clock quality</li>
+                            <li>report_constraint - SDC checks</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>⚡ Design Flow Steps</h4>
+                        <ul>
+                            <li>1. Setup & Library Loading</li>
+                            <li>2. Floorplanning</li>
+                            <li>3. Power Planning</li>
+                            <li>4. Placement</li>
+                            <li>5. Clock Tree Synthesis</li>
+                            <li>6. Routing</li>
+                            <li>7. Optimization & Signoff</li>
+                            <li>8. GDSII Generation</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>📏 Key Metrics</h4>
+                        <ul>
+                            <li>Core Utilization: 60-80%</li>
+                            <li>Aspect Ratio: ~1.0</li>
+                            <li>Clock Skew: <100ps</li>
+                            <li>Slack: Must be ≥0</li>
+                            <li>Max Transition: <0.5ns</li>
+                            <li>Max Capacitance: <0.3pF</li>
+                            <li>IR Drop: <5% VDD</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>📁 File Types</h4>
+                        <ul>
+                            <li>.v - Verilog netlist</li>
+                            <li>.sdc - Timing constraints</li>
+                            <li>.db - Timing library</li>
+                            <li>.lef - Physical library</li>
+                            <li>.tluplus - RC models</li>
+                            <li>.gds - Final layout</li>
+                            <li>.sdf - Delay annotation</li>
+                            <li>.def - Design exchange</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>🎯 Optimization Goals</h4>
+                        <ul>
+                            <li>Power: Minimize consumption</li>
+                            <li>Performance: Meet timing</li>
+                            <li>Area: Minimize die size</li>
+                            <li>Wire Length: Reduce RC delay</li>
+                            <li>Congestion: Avoid hotspots</li>
+                            <li>Clock Skew: Minimize variation</li>
+                            <li>IR Drop: Keep below limit</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>⚠️ Critical Checks</h4>
+                        <ul>
+                            <li>check_design - Design issues</li>
+                            <li>check_timing - SDC coverage</li>
+                            <li>check_legality - Placement legal</li>
+                            <li>DRC - Manufacturing rules</li>
+                            <li>LVS - Connectivity match</li>
+                            <li>Antenna - Gate protection</li>
+                            <li>ERC - Electrical rules</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>🔄 SDC Constraints</h4>
+                        <ul>
+                            <li>create_clock - Define clocks</li>
+                            <li>set_input_delay - Input timing</li>
+                            <li>set_output_delay - Output timing</li>
+                            <li>set_max_delay - Path constraints</li>
+                            <li>set_false_path - Ignore paths</li>
+                            <li>set_multicycle_path - Multi-cycle</li>
+                            <li>set_load - Output loads</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>🏗️ Floorplan Elements</h4>
+                        <ul>
+                            <li>Core Area - Cell placement area</li>
+                            <li>Die Area - Total chip area</li>
+                            <li>Power Rings - VDD/VSS rings</li>
+                            <li>Power Mesh - Cross-chip power</li>
+                            <li>Macro Placement - Hard IPs</li>
+                            <li>I/O Pads - External connections</li>
+                            <li>Blockages - No-place regions</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>💡 Best Practices</h4>
+                        <ul>
+                            <li>Save checkpoints frequently</li>
+                            <li>Check congestion early</li>
+                            <li>Load TLU+ before optimization</li>
+                            <li>Keep utilization 60-80%</li>
+                            <li>Run CTS after placement</li>
+                            <li>Review reports at each step</li>
+                            <li>Fix violations incrementally</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>🐛 Debug Commands</h4>
+                        <ul>
+                            <li>gui_show_view - Launch GUI</li>
+                            <li>report_constraint - Check SDC</li>
+                            <li>report_port - Port info</li>
+                            <li>report_net - Net info</li>
+                            <li>report_cell - Cell info</li>
+                            <li>report_clock_timing - Clock paths</li>
+                            <li>report_clock_tree - Tree structure</li>
+                        </ul>
+                    </div>
+
+                    <div class="ref-card">
+                        <h4>🌟 Fusion Compiler Benefits</h4>
+                        <ul>
+                            <li>Unified RTL-to-GDSII flow</li>
+                            <li>Golden signoff integration</li>
+                            <li>Multi-objective optimization</li>
+                            <li>10-20% better QoR</li>
+                            <li>2-3x faster runtime</li>
+                            <li>Advanced node support</li>
+                            <li>Concurrent clock/data opt</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exam Checklist Section -->
+            <section id="checklist">
+                <h2>✅ Exam Preparation Checklist</h2>
+
+                <div class="checklist">
+                    <h3 style="margin-bottom: 20px; color: #1e3c72;">Master These Topics:</h3>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <label for="check1">Understand the complete physical design flow from RTL to GDSII</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <label for="check2">Know the purpose and steps of floorplanning</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <label for="check3">Explain core utilization and typical values (60-80%)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4">
+                        <label for="check4">Understand global vs. detailed placement differences</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5">
+                        <label for="check5">Know Clock Tree Synthesis objectives (minimize skew)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check6">
+                        <label for="check6">Understand routing stages: global, track, detail, S&R</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check7">
+                        <label for="check7">Explain setup time vs. hold time violations and fixes</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check8">
+                        <label for="check8">Know the difference between DRC and LVS</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check9">
+                        <label for="check9">Understand timing slack (positive = met, negative = violation)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check10">
+                        <label for="check10">Know Fusion Compiler advantages over DC+ICC2</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check11">
+                        <label for="check11">Memorize essential commands: place_opt, clock_opt, route_auto</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check12">
+                        <label for="check12">Know the purpose of TLU+ files (RC parasitic extraction)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check13">
+                        <label for="check13">Understand LEF files (physical library information)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check14">
+                        <label for="check14">Know SDC file purpose (timing constraints)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check15">
+                        <label for="check15">Understand power planning: rings and mesh</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check16">
+                        <label for="check16">Know metal layer usage (lower for local, upper for power)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check17">
+                        <label for="check17">Memorize file types: .v, .sdc, .db, .lef, .gds</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check18">
+                        <label for="check18">Know the correct flow sequence: Floorplan → Place → CTS → Route</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check19">
+                        <label for="check19">Understand congestion analysis and why it's important</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check20">
+                        <label for="check20">Know critical path and its significance</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check21">
+                        <label for="check21">Review all code examples and understand each command</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check22">
+                        <label for="check22">Practice explaining the complete design flow verbally</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check23">
+                        <label for="check23">Review common mistakes and know how to avoid them</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check24">
+                        <label for="check24">Understand GDSII as final output for fabrication</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check25">
+                        <label for="check25">Know all expected exam questions and their answers</label>
+                    </div>
+                </div>
+
+                <div class="key-point" style="margin-top: 30px;">
+                    <strong>Study Strategy:</strong> Focus on understanding concepts rather than memorizing. Be able to explain the "why" behind each step. Practice drawing the flow diagram from memory. Review code examples and understand what each command does.
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <h3>Hardware Design Laboratory</h3>
+            <p>VLSI Physical Design | Final Exam Study Guide</p>
+            <div class="good-luck">🌟 Good Luck on Your Exam! 🌟</div>
+            <p style="margin-top: 15px; opacity: 0.8;">Study smart, stay confident! 💪</p>
+        </footer>
+    </div>
+
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()">🖨️ Print Guide</button>
+</body>
+</html>
