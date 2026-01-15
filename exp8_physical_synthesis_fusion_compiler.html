@@ -463,9 +463,1541 @@
                 </div>
             </div>
 
-            <!-- PLACEHOLDER FOR NEXT SECTION: Objectives and Core Concepts -->
+            <!-- Objectives Section -->
+            <section id="objectives">
+                <h2>🎯 Learning Objectives</h2>
+                
+                <div class="concept-card">
+                    <h4>By the end of this experiment, you should be able to:</h4>
+                    <ul style="margin-left: 20px; margin-top: 15px; line-height: 2;">
+                        <li>✓ Understand the physical synthesis flow using Fusion Compiler</li>
+                        <li>✓ Perform floorplanning and analyze core utilization</li>
+                        <li>✓ Execute placement and optimization of standard cells</li>
+                        <li>✓ Implement Clock Tree Synthesis (CTS) and analyze clock networks</li>
+                        <li>✓ Perform routing and resolve DRC violations</li>
+                        <li>✓ Analyze timing, power, and area reports</li>
+                        <li>✓ Generate and verify final GDSII layout</li>
+                    </ul>
+                </div>
+
+                <div class="key-point">
+                    <strong>Key Takeaway:</strong> Physical synthesis bridges the gap between RTL design and silicon implementation by placing and routing standard cells while meeting timing, power, and area constraints.
+                </div>
+            </section>
+
+            <!-- Core Concepts -->
+            <section id="core-concepts">
+                <h2>💡 Core Concepts</h2>
+
+                <div class="concept-card">
+                    <h4>What is Physical Synthesis?</h4>
+                    <p>Physical synthesis is the process of transforming a gate-level netlist into a physical layout with actual geometries. It includes:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Floorplanning:</strong> Defining chip area and macro placement</li>
+                        <li><strong>Placement:</strong> Positioning standard cells in rows</li>
+                        <li><strong>Clock Tree Synthesis:</strong> Building balanced clock distribution network</li>
+                        <li><strong>Routing:</strong> Creating metal interconnections between cells</li>
+                        <li><strong>Optimization:</strong> Meeting timing, power, and area goals</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Design Flow Stages</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Stage</th>
+                                <th>Purpose</th>
+                                <th>Key Outputs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Floorplanning</td>
+                                <td>Define chip dimensions and plan macro locations</td>
+                                <td>Core area, aspect ratio, utilization</td>
+                            </tr>
+                            <tr>
+                                <td>Placement</td>
+                                <td>Position standard cells optimally</td>
+                                <td>Cell locations, congestion map</td>
+                            </tr>
+                            <tr>
+                                <td>CTS</td>
+                                <td>Build clock distribution network</td>
+                                <td>Clock tree, skew, latency</td>
+                            </tr>
+                            <tr>
+                                <td>Routing</td>
+                                <td>Create physical metal connections</td>
+                                <td>Routed design, DRC report</td>
+                            </tr>
+                            <tr>
+                                <td>Sign-off</td>
+                                <td>Final verification and tape-out prep</td>
+                                <td>GDSII, timing reports</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Fusion Compiler Overview -->
+            <section id="fusion-compiler">
+                <h2>🔧 Fusion Compiler Overview</h2>
+
+                <div class="concept-card">
+                    <h4>What is Fusion Compiler?</h4>
+                    <p>Fusion Compiler is Synopsys' next-generation RTL-to-GDSII physical synthesis tool that combines logic synthesis and physical implementation in a unified environment.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Key Features</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                            <strong>🎯 Unified Platform</strong>
+                            <p style="margin-top: 8px;">Single tool for synthesis and P&R</p>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                            <strong>⚡ Fast Runtime</strong>
+                            <p style="margin-top: 8px;">Parallel processing for faster convergence</p>
+                        </div>
+                        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                            <strong>📊 Better PPA</strong>
+                            <p style="margin-top: 8px;">Improved Power, Performance, Area</p>
+                        </div>
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px;">
+                            <strong>🔄 Concurrent Opt</strong>
+                            <p style="margin-top: 8px;">Simultaneous timing/power optimization</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>Important:</strong> Fusion Compiler requires proper technology files (.tf), libraries (.db), and LEF files for the target process node. Missing files will cause errors during setup.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Required Input Files</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>File Type</th>
+                                <th>Extension</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Technology File</td>
+                                <td>.tf</td>
+                                <td>Process technology rules and layers</td>
+                            </tr>
+                            <tr>
+                                <td>Liberty File</td>
+                                <td>.lib / .db</td>
+                                <td>Cell timing and power characteristics</td>
+                            </tr>
+                            <tr>
+                                <td>LEF File</td>
+                                <td>.lef</td>
+                                <td>Physical cell dimensions and pins</td>
+                            </tr>
+                            <tr>
+                                <td>Netlist</td>
+                                <td>.v</td>
+                                <td>Gate-level design after synthesis</td>
+                            </tr>
+                            <tr>
+                                <td>Constraints</td>
+                                <td>.sdc</td>
+                                <td>Timing, clock, and I/O constraints</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Physical Synthesis Flow -->
+            <section id="physical-synthesis">
+                <h2>⚙️ Physical Synthesis Flow</h2>
+
+                <div class="concept-card">
+                    <h4>Complete Flow Diagram</h4>
+                    <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                        <div style="text-align: center;">
+                            <div style="background: #667eea; color: white; padding: 15px; border-radius: 8px; margin: 10px auto; max-width: 300px;">
+                                <strong>1. Setup & Initialization</strong>
+                                <p style="margin-top: 5px; font-size: 0.9em;">Load libraries, tech files, netlist</p>
+                            </div>
+                            <div style="font-size: 2em; margin: 10px 0;">↓</div>
+                            <div style="background: #4c9aff; color: white; padding: 15px; border-radius: 8px; margin: 10px auto; max-width: 300px;">
+                                <strong>2. Floorplanning</strong>
+                                <p style="margin-top: 5px; font-size: 0.9em;">Define core area, aspect ratio, utilization</p>
+                            </div>
+                            <div style="font-size: 2em; margin: 10px 0;">↓</div>
+                            <div style="background: #2a5298; color: white; padding: 15px; border-radius: 8px; margin: 10px auto; max-width: 300px;">
+                                <strong>3. Placement</strong>
+                                <p style="margin-top: 5px; font-size: 0.9em;">Place standard cells, optimize timing</p>
+                            </div>
+                            <div style="font-size: 2em; margin: 10px 0;">↓</div>
+                            <div style="background: #764ba2; color: white; padding: 15px; border-radius: 8px; margin: 10px auto; max-width: 300px;">
+                                <strong>4. Clock Tree Synthesis</strong>
+                                <p style="margin-top: 5px; font-size: 0.9em;">Build clock network, minimize skew</p>
+                            </div>
+                            <div style="font-size: 2em; margin: 10px 0;">↓</div>
+                            <div style="background: #1e3c72; color: white; padding: 15px; border-radius: 8px; margin: 10px auto; max-width: 300px;">
+                                <strong>5. Routing</strong>
+                                <p style="margin-top: 5px; font-size: 0.9em;">Route signals, fix DRC violations</p>
+                            </div>
+                            <div style="font-size: 2em; margin: 10px 0;">↓</div>
+                            <div style="background: #4caf50; color: white; padding: 15px; border-radius: 8px; margin: 10px auto; max-width: 300px;">
+                                <strong>6. Sign-off & GDS</strong>
+                                <p style="margin-top: 5px; font-size: 0.9em;">Generate layout, verify timing</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <strong>Critical Path:</strong> The flow is iterative - if timing violations occur, you may need to go back to placement or even floorplanning to adjust parameters.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Optimization Techniques at Each Stage</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Stage</th>
+                                <th>Optimization Focus</th>
+                                <th>Techniques Used</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Floorplanning</td>
+                                <td>Area & Congestion</td>
+                                <td>Adjust utilization, core aspect ratio</td>
+                            </tr>
+                            <tr>
+                                <td>Placement</td>
+                                <td>Timing & Routability</td>
+                                <td>Cell spreading, density control, buffer insertion</td>
+                            </tr>
+                            <tr>
+                                <td>CTS</td>
+                                <td>Clock Skew & Latency</td>
+                                <td>Buffer/inverter sizing, tree balancing</td>
+                            </tr>
+                            <tr>
+                                <td>Routing</td>
+                                <td>Wire Length & Congestion</td>
+                                <td>Layer assignment, via minimization, detours</td>
+                            </tr>
+                            <tr>
+                                <td>Post-Route</td>
+                                <td>Timing Closure</td>
+                                <td>Gate sizing, Vt swapping, buffering</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Floorplanning Section -->
+            <section id="floorplanning">
+                <h2>📐 Floorplanning</h2>
+
+                <div class="concept-card">
+                    <h4>What is Floorplanning?</h4>
+                    <p>Floorplanning is the first physical design step where you define the chip's dimensions, allocate space for cells, and plan macro block locations. It sets the foundation for successful placement and routing.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Key Floorplanning Parameters</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Definition</th>
+                                <th>Typical Range</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Core Utilization</strong></td>
+                                <td>% of core area occupied by cells</td>
+                                <td>60-80%</td>
+                                <td>Higher = denser, harder to route</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Aspect Ratio</strong></td>
+                                <td>Height / Width ratio</td>
+                                <td>0.5 - 2.0</td>
+                                <td>1.0 = square, affects wire length</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Core-to-IO</strong></td>
+                                <td>Space between core and pads</td>
+                                <td>10-50 μm</td>
+                                <td>Room for routing and power</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Row Spacing</strong></td>
+                                <td>Gap between cell rows</td>
+                                <td>Site height</td>
+                                <td>Affects routing channels</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="key-point">
+                    <strong>Utilization Trade-off:</strong> 70% utilization is often optimal - leaves room for routing while maintaining reasonable area. Too high (>85%) causes congestion; too low (<50%) wastes area.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Floorplanning Commands in Fusion Compiler</h4>
+                    <div class="code-block">
+<code><span class="comment"># Initialize floorplan with dimensions</span>
+<span class="function">initialize_floorplan</span> \
+    -core_utilization <span class="string">0.7</span> \
+    -core_aspect_ratio <span class="string">1.0</span> \
+    -core_offset {<span class="string">10 10 10 10</span>} \
+    -flip_first_row
+
+<span class="comment"># Or specify exact dimensions</span>
+<span class="function">initialize_floorplan</span> \
+    -core_width <span class="string">500</span> \
+    -core_height <span class="string">500</span> \
+    -left_io2core <span class="string">20</span> \
+    -right_io2core <span class="string">20</span> \
+    -top_io2core <span class="string">20</span> \
+    -bottom_io2core <span class="string">20</span>
+
+<span class="comment"># View the floorplan</span>
+<span class="function">gui_start</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>Common Issue:</strong> If utilization is too high, you'll see "Cannot place all cells" or routing congestion errors. Solution: Reduce utilization or increase core area.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Analyzing Floorplan Quality</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                        <li>✓ Check core area vs. cell area match expected utilization</li>
+                        <li>✓ Verify aspect ratio is reasonable for your design</li>
+                        <li>✓ Ensure adequate space for routing (30-40% free)</li>
+                        <li>✓ Check pin placement allows good connectivity</li>
+                        <li>✓ Verify power ring can be placed around core</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Placement Section -->
+            <section id="placement">
+                <h2>📍 Placement</h2>
+
+                <div class="concept-card">
+                    <h4>What is Placement?</h4>
+                    <p>Placement is the process of determining physical locations for all standard cells within the floorplan. Good placement minimizes wire length, reduces congestion, and helps meet timing constraints.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Placement Stages</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Stage</th>
+                                <th>Purpose</th>
+                                <th>Characteristics</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Coarse Placement</strong></td>
+                                <td>Initial rough positioning</td>
+                                <td>Fast, allows overlap, establishes general layout</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Legalization</strong></td>
+                                <td>Make placement legal</td>
+                                <td>Remove overlaps, align to rows, respect blockages</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Detail Placement</strong></td>
+                                <td>Fine-tune cell positions</td>
+                                <td>Optimize timing, minimize wire length</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Post-Placement Opt</strong></td>
+                                <td>Fix timing violations</td>
+                                <td>Buffer insertion, gate sizing, cell swapping</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Placement Commands</h4>
+                    <div class="code-block">
+<code><span class="comment"># Basic placement flow</span>
+<span class="function">create_placement</span> -effort <span class="string">high</span>
+
+<span class="comment"># Legalize placement (remove overlaps)</span>
+<span class="function">legalize_placement</span>
+
+<span class="comment"># Optimize timing after placement</span>
+<span class="function">place_opt</span>
+
+<span class="comment"># Generate placement report</span>
+<span class="function">report_placement</span> -physical
+<span class="function">report_congestion</span>
+<span class="function">report_timing</span> -max_paths <span class="string">10</span>
+
+<span class="comment"># Check for design rule violations</span>
+<span class="function">check_legality</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <strong>Placement Quality Metrics:</strong> Look for low congestion (<20%), good timing (positive slack), and even cell distribution. High congestion areas may need floorplan adjustments.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Placement Optimization Techniques</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                            <strong>🔄 Buffer Insertion</strong>
+                            <p style="margin-top: 8px;">Add buffers on long nets to fix timing and improve signal integrity</p>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                            <strong>📏 Gate Sizing</strong>
+                            <p style="margin-top: 8px;">Upsize/downsize cells to balance timing vs. power/area</p>
+                        </div>
+                        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                            <strong>⚡ Vt Swapping</strong>
+                            <p style="margin-top: 8px;">Change cell threshold voltage (LVT/HVT) for speed/leakage tradeoff</p>
+                        </div>
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                            <strong>🎯 Pin Assignment</strong>
+                            <p style="margin-top: 8px;">Optimize pin locations to minimize routing distance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>Watch Out:</strong> If placement congestion exceeds 80% in any region, routing will likely fail. Consider reducing utilization or using placement blockages to guide cell distribution.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Analyzing Placement Results</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Check</th>
+                                <th>Command</th>
+                                <th>Good Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Cell Density</td>
+                                <td><code>report_placement</code></td>
+                                <td>Even distribution, no hotspots</td>
+                            </tr>
+                            <tr>
+                                <td>Congestion</td>
+                                <td><code>report_congestion</code></td>
+                                <td>&lt; 20% overflow</td>
+                            </tr>
+                            <tr>
+                                <td>Timing Slack</td>
+                                <td><code>report_timing</code></td>
+                                <td>WNS > 0, TNS = 0</td>
+                            </tr>
+                            <tr>
+                                <td>Legality</td>
+                                <td><code>check_legality</code></td>
+                                <td>No overlaps or violations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Clock Tree Synthesis Section -->
+            <section id="cts">
+                <h2>🕐 Clock Tree Synthesis (CTS)</h2>
+
+                <div class="concept-card">
+                    <h4>What is Clock Tree Synthesis?</h4>
+                    <p>CTS builds a balanced clock distribution network that delivers the clock signal from the clock source to all sequential elements (flip-flops, registers) with minimal skew and acceptable latency.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Key CTS Concepts</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Definition</th>
+                                <th>Goal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Clock Skew</strong></td>
+                                <td>Difference in arrival time between clock pins</td>
+                                <td>Minimize (&lt; 50-100 ps)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Clock Latency</strong></td>
+                                <td>Delay from clock source to registers</td>
+                                <td>Balance across tree</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Insertion Delay</strong></td>
+                                <td>Total delay through clock tree</td>
+                                <td>Minimize while meeting skew</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Clock Transition</strong></td>
+                                <td>Rise/fall time of clock signal</td>
+                                <td>&lt; 10% of clock period</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fanout</strong></td>
+                                <td>Number of loads per buffer</td>
+                                <td>Balance (typically 8-16)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="key-point">
+                    <strong>Skew vs. Latency:</strong> Low skew is critical for timing - it ensures all flip-flops receive clock edges simultaneously. Latency can be higher as long as it's balanced and doesn't violate setup/hold times.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Clock Tree Topologies</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                            <strong>🌳 H-Tree</strong>
+                            <p style="margin-top: 8px;">Symmetric tree structure, excellent skew, higher wire length</p>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                            <strong>🎋 X-Tree</strong>
+                            <p style="margin-top: 8px;">Diagonal routing, good for square floorplans</p>
+                        </div>
+                        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                            <strong>🌲 Fishbone</strong>
+                            <p style="margin-top: 8px;">Spine with branches, good for rectangular designs</p>
+                        </div>
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px;">
+                            <strong>🔀 Hybrid</strong>
+                            <p style="margin-top: 8px;">Combines topologies, optimized for specific designs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>CTS Commands in Fusion Compiler</h4>
+                    <div class="code-block">
+<code><span class="comment"># Set CTS constraints</span>
+<span class="function">set_clock_tree_options</span> \
+    -target_skew <span class="string">0.1</span> \
+    -max_transition <span class="string">0.2</span> \
+    -max_capacitance <span class="string">0.5</span>
+
+<span class="comment"># Specify clock tree reference cells (buffers/inverters)</span>
+<span class="function">set_lib_cell_purpose</span> -include <span class="string">cts</span> [<span class="function">get_lib_cells</span> <span class="string">*/*BUF*</span>]
+<span class="function">set_lib_cell_purpose</span> -include <span class="string">cts</span> [<span class="function">get_lib_cells</span> <span class="string">*/*INV*</span>]
+
+<span class="comment"># Build clock tree</span>
+<span class="function">clock_opt</span> -from <span class="string">build_clock</span> -to <span class="string">route_clock</span>
+
+<span class="comment"># Or step by step:</span>
+<span class="function">synthesize_clock_trees</span>
+<span class="function">route_clock_trees</span>
+<span class="function">optimize_clock_trees</span>
+
+<span class="comment"># Generate CTS reports</span>
+<span class="function">report_clock_tree</span> -summary
+<span class="function">report_clock_timing</span> -type <span class="string">skew</span>
+<span class="function">report_clock_timing</span> -type <span class="string">latency</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>CTS Failure:</strong> If CTS fails with "Unable to meet skew target", try: 1) Increase target skew, 2) Allow more CTS buffer types, 3) Reduce clock frequency, or 4) Improve placement quality.
+                </div>
+
+                <div class="concept-card">
+                    <h4>CTS Quality Checks</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Check Command</th>
+                                <th>Acceptable Range</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Global Skew</td>
+                                <td><code>report_clock_timing -type skew</code></td>
+                                <td>&lt; 5% of clock period</td>
+                            </tr>
+                            <tr>
+                                <td>Max Insertion Delay</td>
+                                <td><code>report_clock_tree -summary</code></td>
+                                <td>&lt; 30% of clock period</td>
+                            </tr>
+                            <tr>
+                                <td>Clock Transition</td>
+                                <td><code>report_constraint -all_violators</code></td>
+                                <td>&lt; 10% of clock period</td>
+                            </tr>
+                            <tr>
+                                <td>Buffer Levels</td>
+                                <td><code>report_clock_tree</code></td>
+                                <td>Balanced (within 1 level)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Routing Section -->
+            <section id="routing">
+                <h2>🛣️ Routing</h2>
+
+                <div class="concept-card">
+                    <h4>What is Routing?</h4>
+                    <p>Routing creates the physical metal interconnections between all pins using available metal layers. It must satisfy design rules, minimize wire length, avoid congestion, and meet electrical constraints.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Routing Stages</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Stage</th>
+                                <th>Description</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Global Routing</strong></td>
+                                <td>Assigns nets to routing regions</td>
+                                <td>Plan overall routing strategy, identify congestion</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Track Assignment</strong></td>
+                                <td>Assigns wires to specific tracks</td>
+                                <td>Allocate routing resources within regions</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Detail Routing</strong></td>
+                                <td>Creates actual metal geometries</td>
+                                <td>Complete all connections with real wires</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Search & Repair</strong></td>
+                                <td>Fixes DRC violations</td>
+                                <td>Resolve spacing, width, via violations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Metal Layer Stack</h4>
+                    <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Layer</th>
+                                    <th>Direction</th>
+                                    <th>Typical Use</th>
+                                    <th>Width/Pitch</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #fff9c4;">
+                                    <td><strong>Metal 1 (M1)</strong></td>
+                                    <td>Horizontal</td>
+                                    <td>Cell-level routing</td>
+                                    <td>Narrow (~0.1 μm)</td>
+                                </tr>
+                                <tr style="background: #e1f5fe;">
+                                    <td><strong>Metal 2 (M2)</strong></td>
+                                    <td>Vertical</td>
+                                    <td>Local connections</td>
+                                    <td>Narrow (~0.1 μm)</td>
+                                </tr>
+                                <tr style="background: #fff9c4;">
+                                    <td><strong>Metal 3-4</strong></td>
+                                    <td>Horizontal/Vertical</td>
+                                    <td>Intermediate routing</td>
+                                    <td>Medium (~0.2 μm)</td>
+                                </tr>
+                                <tr style="background: #e1f5fe;">
+                                    <td><strong>Metal 5-6+</strong></td>
+                                    <td>Horizontal/Vertical</td>
+                                    <td>Global routing, power</td>
+                                    <td>Wide (~0.5+ μm)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 15px; font-style: italic; color: #666;">
+                            💡 Lower layers (M1-M2) have higher resistance and are used for short connections. Upper layers are for long-distance routing and power distribution.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <strong>Routing Direction:</strong> Alternating horizontal/vertical layers reduces shorts and simplifies via placement. M1 horizontal, M2 vertical, M3 horizontal, etc.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Routing Commands</h4>
+                    <div class="code-block">
+<code><span class="comment"># Set routing options</span>
+<span class="function">set_route_opt_options</span> \
+    -optimize_wire_via_effort_level <span class="string">high</span> \
+    -crosstalk_driven <span class="keyword">true</span>
+
+<span class="comment"># Route the design</span>
+<span class="function">route_opt</span>
+
+<span class="comment"># Or step by step:</span>
+<span class="function">route_global</span>
+<span class="function">route_track</span>
+<span class="function">route_detail</span>
+
+<span class="comment"># Fix routing violations</span>
+<span class="function">route_search_repair</span>
+
+<span class="comment"># Optimize after routing</span>
+<span class="function">route_opt</span> -incremental
+
+<span class="comment"># Check for violations</span>
+<span class="function">check_routes</span>
+<span class="function">verify_drc</span>
+<span class="function">report_route</span> -verbose
+</code>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>DRC Violations:</strong> Common types include minimum spacing, minimum width, via enclosure, and short circuits. Use <code>verify_drc</code> and <code>route_search_repair</code> iteratively to fix them.
+                </div>
+
+                <div class="concept-card">
+                    <h4>Design Rule Check (DRC) Categories</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+                            <strong>📏 Spacing Violations</strong>
+                            <p style="margin-top: 8px;">Wires too close together on same layer</p>
+                        </div>
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                            <strong>📐 Width Violations</strong>
+                            <p style="margin-top: 8px;">Wires narrower than minimum allowed</p>
+                        </div>
+                        <div style="background: #fce4ec; padding: 15px; border-radius: 8px; border-left: 4px solid #e91e63;">
+                            <strong>⚡ Short Circuits</strong>
+                            <p style="margin-top: 8px;">Different nets touching illegally</p>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                            <strong>🔌 Via Violations</strong>
+                            <p style="margin-top: 8px;">Improper via enclosure or spacing</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Post-Route Analysis</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Analysis</th>
+                                <th>Command</th>
+                                <th>What to Check</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Route Completion</td>
+                                <td><code>report_route</code></td>
+                                <td>100% nets routed, no opens</td>
+                            </tr>
+                            <tr>
+                                <td>DRC Violations</td>
+                                <td><code>verify_drc</code></td>
+                                <td>Zero violations</td>
+                            </tr>
+                            <tr>
+                                <td>Timing</td>
+                                <td><code>report_timing</code></td>
+                                <td>WNS > 0, all paths meet timing</td>
+                            </tr>
+                            <tr>
+                                <td>Congestion</td>
+                                <td><code>report_congestion</code></td>
+                                <td>No overflow regions</td>
+                            </tr>
+                            <tr>
+                                <td>Wire Length</td>
+                                <td><code>report_design -physical</code></td>
+                                <td>Reasonable total wire length</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Complete Code Examples -->
+            <section id="code-examples">
+                <h2>💻 Complete Code Examples</h2>
+
+                <div class="concept-card">
+                    <h4>Full Fusion Compiler Script - Setup Phase</h4>
+                    <div class="code-block">
+<code><span class="comment"># ============================================</span>
+<span class="comment"># Fusion Compiler - Physical Synthesis Script</span>
+<span class="comment"># ============================================</span>
+
+<span class="comment"># Set up library search path</span>
+<span class="function">set_app_var</span> search_path <span class="string">"./libs ./designs $search_path"</span>
+
+<span class="comment"># Define target library (timing/power data)</span>
+<span class="function">set_app_var</span> target_library <span class="string">"slow.db"</span>
+
+<span class="comment"># Define link library (all libraries used)</span>
+<span class="function">set_app_var</span> link_library <span class="string">"* slow.db fast.db"</span>
+
+<span class="comment"># Technology file (LEF - physical layout)</span>
+<span class="function">read_lef</span> <span class="string">"tech.lef"</span>
+<span class="function">read_lef</span> <span class="string">"stdcells.lef"</span>
+
+<span class="comment"># Read synthesized netlist</span>
+<span class="function">read_verilog</span> <span class="string">"design.v"</span>
+
+<span class="comment"># Set current design</span>
+<span class="function">current_design</span> <span class="string">top_module</span>
+
+<span class="comment"># Link the design (resolve references)</span>
+<span class="function">link_design</span>
+
+<span class="comment"># Read timing constraints</span>
+<span class="function">read_sdc</span> <span class="string">"design.sdc"</span>
+
+<span class="comment"># Save design database</span>
+<span class="function">save_block</span> -as <span class="string">design_setup</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Floorplanning Script</h4>
+                    <div class="code-block">
+<code><span class="comment"># ============================================</span>
+<span class="comment"># STEP 1: Floorplanning</span>
+<span class="comment"># ============================================</span>
+
+<span class="comment"># Initialize floorplan with utilization</span>
+<span class="function">initialize_floorplan</span> \
+    -core_utilization <span class="string">0.7</span> \
+    -core_aspect_ratio <span class="string">1.0</span> \
+    -core_offset {<span class="string">10 10 10 10</span>} \
+    -flip_first_row
+
+<span class="comment"># Alternative: specify exact dimensions</span>
+<span class="comment"># initialize_floorplan \</span>
+<span class="comment">#     -core_width 500 \</span>
+<span class="comment">#     -core_height 500 \</span>
+<span class="comment">#     -left_io2core 20 \</span>
+<span class="comment">#     -right_io2core 20 \</span>
+<span class="comment">#     -top_io2core 20 \</span>
+<span class="comment">#     -bottom_io2core 20</span>
+
+<span class="comment"># Create power/ground rings</span>
+<span class="function">create_pg_ring_pattern</span> <span class="string">ring_pattern</span> \
+    -layers {<span class="string">M6 M7</span>} \
+    -widths {<span class="string">2.0 2.0</span>} \
+    -spacings {<span class="string">1.0 1.0</span>} \
+    -core_offset {<span class="string">2.0 2.0</span>}
+
+<span class="function">create_pg_ring</span> \
+    -pattern <span class="string">ring_pattern</span> \
+    -nets {<span class="string">VDD VSS</span>}
+
+<span class="comment"># Create power stripes</span>
+<span class="function">create_pg_mesh_pattern</span> <span class="string">mesh_pattern</span> \
+    -layers {<span class="string">M6 M7</span>} \
+    -widths {<span class="string">1.0 1.0</span>} \
+    -pitches {<span class="string">50.0 50.0</span>}
+
+<span class="function">create_pg_mesh</span> \
+    -pattern <span class="string">mesh_pattern</span> \
+    -nets {<span class="string">VDD VSS</span>}
+
+<span class="comment"># Connect power to standard cells</span>
+<span class="function">create_pg_std_cell_conn_pattern</span> <span class="string">cell_pattern</span> \
+    -layers {<span class="string">M1</span>}
+
+<span class="function">create_pg_std_cell_conn</span> \
+    -pattern <span class="string">cell_pattern</span> \
+    -nets {<span class="string">VDD VSS</span>}
+
+<span class="comment"># Report floorplan statistics</span>
+<span class="function">report_floorplan</span>
+<span class="function">report_design</span> -physical
+
+<span class="comment"># Save floorplan</span>
+<span class="function">save_block</span> -as <span class="string">design_floorplan</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Placement Script</h4>
+                    <div class="code-block">
+<code><span class="comment"># ============================================</span>
+<span class="comment"># STEP 2: Placement</span>
+<span class="comment"># ============================================</span>
+
+<span class="comment"># Set placement options</span>
+<span class="function">set_app_var</span> place.coarse.continue_on_missing_scandef <span class="keyword">true</span>
+
+<span class="comment"># Perform coarse placement</span>
+<span class="function">create_placement</span> -effort <span class="string">high</span> -timing_driven
+
+<span class="comment"># Legalize placement (remove overlaps)</span>
+<span class="function">legalize_placement</span>
+
+<span class="comment"># Check placement legality</span>
+<span class="function">check_legality</span> -verbose
+
+<span class="comment"># Optimize placement for timing</span>
+<span class="function">place_opt</span>
+
+<span class="comment"># Generate placement reports</span>
+<span class="function">report_placement</span> -physical
+<span class="function">report_congestion</span> -grc_based
+<span class="function">report_timing</span> -max_paths <span class="string">10</span> -path_type <span class="string">summary</span>
+<span class="function">report_qor</span> -summary
+
+<span class="comment"># Check for timing violations</span>
+<span class="function">report_constraint</span> -all_violators -nosplit
+
+<span class="comment"># Save placed design</span>
+<span class="function">save_block</span> -as <span class="string">design_placed</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Clock Tree Synthesis Script</h4>
+                    <div class="code-block">
+<code><span class="comment"># ============================================</span>
+<span class="comment"># STEP 3: Clock Tree Synthesis</span>
+<span class="comment"># ============================================</span>
+
+<span class="comment"># Define CTS constraints</span>
+<span class="function">set_clock_tree_options</span> \
+    -target_skew <span class="string">0.1</span> \
+    -target_latency <span class="string">1.0</span> \
+    -max_transition <span class="string">0.2</span> \
+    -max_capacitance <span class="string">0.5</span> \
+    -buffer_relocation <span class="keyword">true</span> \
+    -gate_relocation <span class="keyword">true</span>
+
+<span class="comment"># Specify clock tree reference cells</span>
+<span class="function">set_lib_cell_purpose</span> -include <span class="string">cts</span> \
+    [<span class="function">get_lib_cells</span> <span class="string">*/*CLKBUF*</span>]
+<span class="function">set_lib_cell_purpose</span> -include <span class="string">cts</span> \
+    [<span class="function">get_lib_cells</span> <span class="string">*/*CLKINV*</span>]
+
+<span class="comment"># Exclude certain cells if needed</span>
+<span class="function">set_lib_cell_purpose</span> -exclude <span class="string">cts</span> \
+    [<span class="function">get_lib_cells</span> <span class="string">*/*BUF_X1</span>]
+
+<span class="comment"># Build and optimize clock tree</span>
+<span class="function">clock_opt</span> -from <span class="string">build_clock</span> -to <span class="string">route_clock</span>
+
+<span class="comment"># Alternative: step-by-step approach</span>
+<span class="comment"># synthesize_clock_trees</span>
+<span class="comment"># route_clock_trees</span>
+<span class="comment"># optimize_clock_trees</span>
+
+<span class="comment"># Generate CTS reports</span>
+<span class="function">report_clock_tree</span> -summary
+<span class="function">report_clock_tree</span> -structure
+<span class="function">report_clock_timing</span> -type <span class="string">skew</span> -verbose
+<span class="function">report_clock_timing</span> -type <span class="string">latency</span> -verbose
+<span class="function">report_timing</span> -delay_type <span class="string">max</span> -max_paths <span class="string">5</span>
+
+<span class="comment"># Check for clock violations</span>
+<span class="function">report_constraint</span> -all_violators -clock
+
+<span class="comment"># Save CTS design</span>
+<span class="function">save_block</span> -as <span class="string">design_cts</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Routing Script</h4>
+                    <div class="code-block">
+<code><span class="comment"># ============================================</span>
+<span class="comment"># STEP 4: Routing</span>
+<span class="comment"># ============================================</span>
+
+<span class="comment"># Set routing options</span>
+<span class="function">set_route_opt_options</span> \
+    -optimize_wire_via_effort_level <span class="string">high</span> \
+    -setup_margin <span class="string">0.05</span> \
+    -hold_margin <span class="string">0.05</span>
+
+<span class="comment"># Enable crosstalk prevention</span>
+<span class="function">set_route_opt_options</span> -crosstalk_driven <span class="keyword">true</span>
+
+<span class="comment"># Perform global and detail routing with optimization</span>
+<span class="function">route_opt</span>
+
+<span class="comment"># Alternative: step-by-step routing</span>
+<span class="comment"># route_global    # Assign nets to routing regions</span>
+<span class="comment"># route_track     # Assign to specific tracks</span>
+<span class="comment"># route_detail    # Create actual wires</span>
+
+<span class="comment"># Fix routing violations</span>
+<span class="function">route_search_repair</span> -max_iterations <span class="string">10</span>
+
+<span class="comment"># Incremental optimization</span>
+<span class="function">route_opt</span> -incremental -size_only
+
+<span class="comment"># Check routing quality</span>
+<span class="function">check_routes</span>
+
+<span class="comment"># Verify design rules</span>
+<span class="function">verify_drc</span>
+
+<span class="comment"># Generate routing reports</span>
+<span class="function">report_route</span> -verbose
+<span class="function">report_design</span> -physical
+<span class="function">report_timing</span> -delay_type <span class="string">max</span> -max_paths <span class="string">20</span>
+<span class="function">report_timing</span> -delay_type <span class="string">min</span> -max_paths <span class="string">20</span>
+<span class="function">report_constraint</span> -all_violators
+
+<span class="comment"># Power analysis</span>
+<span class="function">report_power</span> -hierarchy
+
+<span class="comment"># Area report</span>
+<span class="function">report_area</span> -hierarchy
+
+<span class="comment"># Save routed design</span>
+<span class="function">save_block</span> -as <span class="string">design_routed</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Final Sign-off and Output Generation</h4>
+                    <div class="code-block">
+<code><span class="comment"># ============================================</span>
+<span class="comment"># STEP 5: Sign-off and Output Generation</span>
+<span class="comment"># ============================================</span>
+
+<span class="comment"># Add filler cells (fill empty spaces)</span>
+<span class="function">create_stdcell_filler</span> \
+    -lib_cells {<span class="string">FILL1 FILL2 FILL4 FILL8</span>}
+
+<span class="comment"># Connect filler cells to power/ground</span>
+<span class="function">connect_pg_net</span> -net <span class="string">VDD</span> [<span class="function">get_pins</span> -hier <span class="string">*/VDD</span>]
+<span class="function">connect_pg_net</span> -net <span class="string">VSS</span> [<span class="function">get_pins</span> -hier <span class="string">*/VSS</span>]
+
+<span class="comment"># Final optimization</span>
+<span class="function">route_opt</span> -incremental -only_hold_time
+
+<span class="comment"># Generate comprehensive reports</span>
+<span class="function">report_qor</span> > <span class="string">reports/final_qor.rpt</span>
+<span class="function">report_timing</span> -path_type <span class="string">summary</span> > <span class="string">reports/final_timing.rpt</span>
+<span class="function">report_power</span> > <span class="string">reports/final_power.rpt</span>
+<span class="function">report_area</span> > <span class="string">reports/final_area.rpt</span>
+<span class="function">report_clock_tree</span> -summary > <span class="string">reports/final_clock.rpt</span>
+
+<span class="comment"># Write output files</span>
+
+<span class="comment"># 1. Verilog netlist (with physical info)</span>
+<span class="function">write_verilog</span> <span class="string">outputs/design_final.v</span>
+
+<span class="comment"># 2. DEF file (physical layout)</span>
+<span class="function">write_def</span> <span class="string">outputs/design_final.def</span>
+
+<span class="comment"># 3. GDSII file (for fabrication)</span>
+<span class="function">write_gds</span> <span class="string">outputs/design_final.gds</span>
+
+<span class="comment"># 4. SDC file (updated constraints)</span>
+<span class="function">write_sdc</span> <span class="string">outputs/design_final.sdc</span>
+
+<span class="comment"># 5. SPEF file (parasitics)</span>
+<span class="function">write_parasitics</span> -format <span class="string">SPEF</span> \
+    -output <span class="string">outputs/design_final.spef</span>
+
+<span class="comment"># 6. SDF file (delay annotation)</span>
+<span class="function">write_sdf</span> <span class="string">outputs/design_final.sdf</span>
+
+<span class="comment"># Save final design</span>
+<span class="function">save_block</span> -as <span class="string">design_final</span>
+
+<span class="function">puts</span> <span class="string">"Physical synthesis complete!"</span>
+<span class="function">exit</span>
+</code>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <strong>Running the Script:</strong> Save all sections in a file like <code>physical_synthesis.tcl</code> and run with: <code>fc_shell -f physical_synthesis.tcl | tee run.log</code>
+                </div>
+            </section>
+
+            <!-- Expected Questions Section -->
+            <section id="expected-questions">
+                <h2>❓ Expected Exam Questions</h2>
+
+                <div class="qa-pair">
+                    <div class="question">What is the difference between logical synthesis and physical synthesis?</div>
+                    <div class="answer">
+                        Logical synthesis converts RTL to gate-level netlist without considering physical layout (no placement/routing). Physical synthesis includes placement, routing, and physical optimization while meeting timing, considering actual wire delays and physical constraints.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">Why is clock skew important and how does CTS minimize it?</div>
+                    <div class="answer">
+                        Clock skew is the difference in clock arrival times at different flip-flops. Excessive skew can cause setup/hold violations. CTS minimizes skew by: 1) Building balanced tree structures (H-tree, X-tree), 2) Using matched buffer chains, 3) Equalizing wire lengths, 4) Buffer sizing to balance delays.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What does core utilization of 70% mean? What happens if it's too high or too low?</div>
+                    <div class="answer">
+                        70% utilization means 70% of core area is occupied by standard cells, leaving 30% for routing. Too high (&gt;85%) causes routing congestion and placement failures. Too low (&lt;50%) wastes chip area and increases wire lengths, hurting timing and power.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">Explain the metal layer stack and why layers have alternating directions.</div>
+                    <div class="answer">
+                        Metal layers are stacked vertically with alternating routing directions (M1 horizontal, M2 vertical, M3 horizontal, etc.). This: 1) Reduces shorts between parallel wires, 2) Simplifies via connections (only need to change one coordinate), 3) Enables efficient maze routing algorithms, 4) Lower layers (M1-M2) for local routing, upper layers for global/power.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What are DRC violations and name at least 3 types?</div>
+                    <div class="answer">
+                        DRC (Design Rule Check) violations are physical layout errors that violate manufacturing rules. Types: 1) <strong>Minimum spacing</strong> - wires too close on same layer, 2) <strong>Minimum width</strong> - wires too narrow, 3) <strong>Short circuits</strong> - different nets touching, 4) <strong>Via enclosure</strong> - insufficient metal around via, 5) <strong>Antenna violations</strong> - long metal causing charge buildup.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What is the purpose of floorplanning? What decisions are made?</div>
+                    <div class="answer">
+                        Floorplanning defines the physical foundation of the chip. Decisions include: 1) Core dimensions and aspect ratio, 2) Utilization percentage, 3) Macro block placement, 4) I/O pad locations, 5) Power ring/mesh strategy, 6) Routing channel allocation. Good floorplanning prevents congestion and enables timing closure.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">How does placement optimization improve timing?</div>
+                    <div class="answer">
+                        Placement optimization improves timing through: 1) <strong>Buffer insertion</strong> - breaks long nets to reduce RC delay, 2) <strong>Gate sizing</strong> - upsize critical path cells for speed, downsize non-critical for power, 3) <strong>Cell spreading</strong> - reduce congestion to improve routability, 4) <strong>Vt swapping</strong> - use Low-Vt cells on critical paths for speed.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What input files are required for physical synthesis in Fusion Compiler?</div>
+                    <div class="answer">
+                        Required files: 1) <strong>.lib/.db</strong> - Liberty timing libraries with cell delays, 2) <strong>.lef</strong> - Library Exchange Format with physical cell dimensions, 3) <strong>.tf</strong> - Technology file with process rules and metal layers, 4) <strong>.v</strong> - Synthesized gate-level netlist, 5) <strong>.sdc</strong> - Synopsys Design Constraints with timing requirements.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What is the difference between global routing and detail routing?</div>
+                    <div class="answer">
+                        <strong>Global routing</strong> divides the chip into routing regions and assigns nets to regions, creating a coarse routing plan. It identifies congestion hotspots. <strong>Detail routing</strong> creates actual metal geometries on specific tracks within each region, following design rules and completing all connections with real wires and vias.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">Explain the trade-off between clock skew and clock latency.</div>
+                    <div class="answer">
+                        <strong>Skew</strong> must be minimized (typically &lt;100ps) as it directly affects setup/hold margins and can cause violations. <strong>Latency</strong> can be higher as long as it's balanced across the tree - all flip-flops see the same delay. Adding buffers reduces skew but increases latency. The goal is zero skew with acceptable latency (&lt;30% of clock period).
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What happens during the legalization step in placement?</div>
+                    <div class="answer">
+                        Legalization makes coarse placement legal by: 1) Removing cell overlaps by spreading cells apart, 2) Aligning cells to standard cell rows, 3) Respecting placement blockages and keep-out areas, 4) Orienting cells correctly (flipping for power rail alignment), 5) Ensuring minimum spacing between cells is maintained.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">Why are filler cells added and what do they do?</div>
+                    <div class="answer">
+                        Filler cells fill gaps between standard cells to: 1) Ensure continuous N-well and power/ground rails, 2) Prevent DRC violations from gaps, 3) Maintain uniform substrate biasing, 4) Improve manufacturing yield. They contain no logic, just power/ground connections and well layers.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What is the purpose of the SPEF file generated after routing?</div>
+                    <div class="answer">
+                        SPEF (Standard Parasitic Exchange Format) contains extracted parasitic resistances and capacitances of all routed wires. It's used for: 1) Accurate post-route timing analysis, 2) Power analysis with real RC values, 3) Signal integrity analysis, 4) Back-annotation to simulation tools for verification.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">Compare H-tree and Fishbone clock tree topologies.</div>
+                    <div class="answer">
+                        <strong>H-tree:</strong> Symmetric, recursive tree with branches at 90°. Pros: Excellent skew, balanced structure. Cons: Higher wire length, works best for square layouts. <strong>Fishbone:</strong> Spine with perpendicular branches. Pros: Lower wire length, good for rectangular designs. Cons: Slightly higher skew, less symmetric. Choice depends on floorplan shape.
+                    </div>
+                </div>
+
+                <div class="qa-pair">
+                    <div class="question">What does route_opt do and when should it be used?</div>
+                    <div class="answer">
+                        <code>route_opt</code> performs routing and simultaneous optimization. It: 1) Routes all nets while optimizing for timing, 2) Inserts buffers/gates during routing, 3) Performs layer assignment, 4) Fixes setup/hold violations, 5) Minimizes DRC violations. Use it as the main routing command for best PPA (Power, Performance, Area) results. Use incremental mode after initial routing for fine-tuning.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Common Mistakes Section -->
+            <section id="common-mistakes">
+                <h2>⚠️ Common Mistakes to Avoid</h2>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Setting utilization &gt; 90%</strong></p>
+                        <p>Causes severe routing congestion, placement failures, and timing violations.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Use 60-80% utilization</strong></p>
+                        <p>Leaves adequate space for routing channels, optimization, and ECO changes.</p>
+                    </div>
+                </div>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Ignoring clock tree constraints</strong></p>
+                        <p>Running CTS without specifying target_skew or reference cells leads to poor clock quality.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Set CTS constraints properly</strong></p>
+                        <p>Define target_skew, max_transition, and explicitly list allowed CTS buffers/inverters.</p>
+                    </div>
+                </div>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Skipping legalization check</strong></p>
+                        <p>Proceeding to routing with illegal placement causes failures and wastes runtime.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Always run check_legality</strong></p>
+                        <p>Verify placement is legal before CTS/routing: <code>check_legality -verbose</code></p>
+                    </div>
+                </div>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Not fixing DRC violations</strong></p>
+                        <p>Leaving design rule violations will fail fabrication and tapeout.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Iterate until zero DRCs</strong></p>
+                        <p>Use <code>route_search_repair</code> repeatedly and verify with <code>verify_drc</code> until clean.</p>
+                    </div>
+                </div>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Forgetting to save block</strong></p>
+                        <p>Long runtime stages lost if tool crashes without checkpoints.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Save after each major stage</strong></p>
+                        <p>Use <code>save_block -as design_stagename</code> after floorplan, placement, CTS, routing.</p>
+                    </div>
+                </div>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Using incorrect library files</strong></p>
+                        <p>Mixing libraries from different process nodes or corners causes errors.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Match all library files</strong></p>
+                        <p>Ensure .lib, .lef, and .tf are all from the same technology node and vendor.</p>
+                    </div>
+                </div>
+
+                <div class="mistake-container">
+                    <div class="mistake-wrong">
+                        <h4>❌ Wrong</h4>
+                        <p><strong>Not checking timing after routing</strong></p>
+                        <p>Routing adds wire delays that can violate timing constraints.</p>
+                    </div>
+                    <div class="mistake-correct">
+                        <h4>✅ Correct</h4>
+                        <p><strong>Always verify post-route timing</strong></p>
+                        <p>Run <code>report_timing</code> for setup and hold after routing to ensure closure.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expected Multiple Choice Questions -->
+            <section style="background: #f0f4f8; padding: 30px; border-radius: 10px; margin-top: 40px;">
+                <h2 style="color: #1e3c72; border-bottom: 3px solid #667eea; padding-bottom: 10px;">📝 Expected Multiple Choice Questions</h2>
+                
+                <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="font-weight: 600; color: #1e3c72; margin-bottom: 15px;">1. What is the typical range for core utilization in physical design?</p>
+                    <div style="margin-left: 20px; line-height: 2;">
+                        <label style="display: block;"><input type="radio" name="q1" style="margin-right: 10px;">a) 30-40%</label>
+                        <label style="display: block;"><input type="radio" name="q1" style="margin-right: 10px;">b) 50-60%</label>
+                        <label style="display: block;"><input type="radio" name="q1" style="margin-right: 10px;"><strong style="color: #4caf50;">c) 60-80% ✓</strong></label>
+                        <label style="display: block;"><input type="radio" name="q1" style="margin-right: 10px;">d) 85-95%</label>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="font-weight: 600; color: #1e3c72; margin-bottom: 15px;">2. Which Fusion Compiler command performs placement legalization?</p>
+                    <div style="margin-left: 20px; line-height: 2;">
+                        <label style="display: block;"><input type="radio" name="q2" style="margin-right: 10px;">a) create_placement</label>
+                        <label style="display: block;"><input type="radio" name="q2" style="margin-right: 10px;"><strong style="color: #4caf50;">b) legalize_placement ✓</strong></label>
+                        <label style="display: block;"><input type="radio" name="q2" style="margin-right: 10px;">c) place_opt</label>
+                        <label style="display: block;"><input type="radio" name="q2" style="margin-right: 10px;">d) check_legality</label>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="font-weight: 600; color: #1e3c72; margin-bottom: 15px;">3. What does clock skew measure?</p>
+                    <div style="margin-left: 20px; line-height: 2;">
+                        <label style="display: block;"><input type="radio" name="q3" style="margin-right: 10px;">a) Total delay from source to flip-flops</label>
+                        <label style="display: block;"><input type="radio" name="q3" style="margin-right: 10px;"><strong style="color: #4caf50;">b) Difference in clock arrival times at different flip-flops ✓</strong></label>
+                        <label style="display: block;"><input type="radio" name="q3" style="margin-right: 10px;">c) Number of clock buffers in the tree</label>
+                        <label style="display: block;"><input type="radio" name="q3" style="margin-right: 10px;">d) Clock frequency variation</label>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="font-weight: 600; color: #1e3c72; margin-bottom: 15px;">4. Which metal layers are typically used for power distribution?</p>
+                    <div style="margin-left: 20px; line-height: 2;">
+                        <label style="display: block;"><input type="radio" name="q4" style="margin-right: 10px;">a) Metal 1 and 2 only</label>
+                        <label style="display: block;"><input type="radio" name="q4" style="margin-right: 10px;">b) Only the topmost metal layer</label>
+                        <label style="display: block;"><input type="radio" name="q4" style="margin-right: 10px;"><strong style="color: #4caf50;">c) Upper metal layers (M5, M6+) ✓</strong></label>
+                        <label style="display: block;"><input type="radio" name="q4" style="margin-right: 10px;">d) All layers equally</label>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="font-weight: 600; color: #1e3c72; margin-bottom: 15px;">5. What file format contains extracted parasitic RC values after routing?</p>
+                    <div style="margin-left: 20px; line-height: 2;">
+                        <label style="display: block;"><input type="radio" name="q5" style="margin-right: 10px;">a) GDSII</label>
+                        <label style="display: block;"><input type="radio" name="q5" style="margin-right: 10px;">b) DEF</label>
+                        <label style="display: block;"><input type="radio" name="q5" style="margin-right: 10px;"><strong style="color: #4caf50;">c) SPEF ✓</strong></label>
+                        <label style="display: block;"><input type="radio" name="q5" style="margin-right: 10px;">d) SDC</label>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="font-weight: 600; color: #1e3c72; margin-bottom: 15px;">6. Which stage comes immediately after placement in the physical synthesis flow?</p>
+                    <div style="margin-left: 20px; line-height: 2;">
+                        <label style="display: block;"><input type="radio" name="q6" style="margin-right: 10px;">a) Routing</label>
+                        <label style="display: block;"><input type="radio" name="q6" style="margin-right: 10px;"><strong style="color: #4caf50;">b) Clock Tree Synthesis ✓</strong></label>
+                        <label style="display: block;"><input type="radio" name="q6" style="margin-right: 10px;">c) Floorplanning</label>
+                        <label style="display: block;"><input type="radio" name="q6" style="margin-right: 10px;">d) Sign-off</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Reference Cards -->
+            <section id="quick-reference">
+                <h2>📋 Quick Reference Cards</h2>
+
+                <div class="reference-grid">
+                    <div class="reference-card">
+                        <h3>🔧 Essential Commands</h3>
+                        <ul>
+                            <li>initialize_floorplan</li>
+                            <li>create_placement</li>
+                            <li>legalize_placement</li>
+                            <li>place_opt</li>
+                            <li>clock_opt</li>
+                            <li>route_opt</li>
+                            <li>verify_drc</li>
+                            <li>write_gds</li>
+                        </ul>
+                    </div>
+
+                    <div class="reference-card">
+                        <h3>📊 Key Reports</h3>
+                        <ul>
+                            <li>report_qor</li>
+                            <li>report_timing</li>
+                            <li>report_power</li>
+                            <li>report_area</li>
+                            <li>report_congestion</li>
+                            <li>report_clock_tree</li>
+                            <li>report_route</li>
+                            <li>check_legality</li>
+                        </ul>
+                    </div>
+
+                    <div class="reference-card">
+                        <h3>📁 File Extensions</h3>
+                        <ul>
+                            <li>.lib / .db → Timing libraries</li>
+                            <li>.lef → Physical layout</li>
+                            <li>.tf → Technology rules</li>
+                            <li>.v → Verilog netlist</li>
+                            <li>.sdc → Constraints</li>
+                            <li>.def → Design layout</li>
+                            <li>.gds → GDSII layout</li>
+                            <li>.spef → Parasitics</li>
+                        </ul>
+                    </div>
+
+                    <div class="reference-card">
+                        <h3>🎯 Target Values</h3>
+                        <ul>
+                            <li>Utilization: 60-80%</li>
+                            <li>Aspect Ratio: 0.5-2.0</li>
+                            <li>Clock Skew: &lt;100 ps</li>
+                            <li>Congestion: &lt;20%</li>
+                            <li>DRC: 0 violations</li>
+                            <li>WNS: &gt; 0 ns</li>
+                            <li>TNS: 0 ns</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exam Checklist -->
+            <section id="checklist">
+                <div class="checklist">
+                    <h3>✅ Final Exam Preparation Checklist</h3>
+                    
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <label for="check1">Understand the complete physical synthesis flow (floorplan → placement → CTS → routing)</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <label for="check2">Know key Fusion Compiler commands for each stage</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <label for="check3">Explain floorplanning parameters: utilization, aspect ratio, core offset</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4">
+                        <label for="check4">Describe placement stages: coarse, legalization, detail, optimization</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5">
+                        <label for="check5">Differentiate between clock skew and clock latency</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check6">
+                        <label for="check6">List clock tree topologies: H-tree, X-tree, Fishbone, Hybrid</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check7">
+                        <label for="check7">Understand routing stages: global, track, detail, search & repair</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check8">
+                        <label for="check8">Know metal layer usage: lower for local, upper for power/global</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check9">
+                        <label for="check9">Identify DRC violation types and how to fix them</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check10">
+                        <label for="check10">List required input files: .lib, .lef, .tf, .v, .sdc</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check11">
+                        <label for="check11">Know output files: GDSII, DEF, SPEF, SDF and their purposes</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check12">
+                        <label for="check12">Understand optimization techniques: buffer insertion, gate sizing, Vt swapping</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check13">
+                        <label for="check13">Explain trade-offs: utilization vs congestion, skew vs latency</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check14">
+                        <label for="check14">Practice writing Fusion Compiler scripts from memory</label>
+                    </div>
+
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check15">
+                        <label for="check15">Review all 15 expected questions and 7 common mistakes</label>
+                    </div>
+                </div>
+            </section>
 
         </div>
+
+        <!-- Footer -->
+        <footer>
+            <h3 style="margin-bottom: 15px;">🎓 Hardware Design Lab</h3>
+            <p style="font-size: 1.1em; margin-bottom: 10px;">Experiment 8: Physical Synthesis with Fusion Compiler</p>
+            <p style="opacity: 0.9;">VLSI Design Course | Final Exam Material</p>
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p style="font-size: 1.2em; font-weight: bold; color: #ffd700;">Good Luck on Your Exam! 🌟</p>
+                <p style="margin-top: 10px; opacity: 0.8;">Study smart, practice commands, understand concepts!</p>
+            </div>
+        </footer>
     </div>
 
     <button class="print-button" onclick="window.print()">🖨️ Print Study Guide</button>
